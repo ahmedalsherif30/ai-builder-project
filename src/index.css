@@ -1,0 +1,205 @@
+@import "tailwindcss";
+
+@layer base {
+  *, ::before, ::after {
+    font-family: 'Rubik', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  }
+
+  html {
+    font-family: 'Rubik', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    font-size: 16px;
+    background-color: #030712;
+    color: #fef3c7;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Rubik', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    font-size: 1rem;
+    line-height: 1.7;
+    letter-spacing: 0.005em;
+    background-color: #030712;
+    color: #fef3c7;
+  }
+}
+
+/* Unified Brand Color System - ExplainingDream.com */
+/* Primary Brand Color: Emerald Green (الزمرد الروحي) */
+/* Brand Accent Color: Warm Royal Gold (الذهب الملكي) */
+/* Dark Background Canvas: Deep Midnight Slate (#030712 / #06101e) */
+
+/* Grand Mosque & Islamic Professional Background Styling */
+.bg-portal-wallpaper,
+.bg-islamic-stars {
+  background-color: #030712;
+  background-image: 
+    radial-gradient(circle at 50% 12%, rgba(245, 158, 11, 0.14) 0%, transparent 55%),
+    radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.09) 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(217, 119, 6, 0.08) 0%, transparent 45%),
+    url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23f59e0b' fill-opacity='0.05' fill-rule='evenodd'%3E%3Cpath d='M40 0l10 30h30L55 48l10 32-25-18-25 18 10-32L5 30h30zM0 40l5 15h15l-12 9 5 16-13-9-13 9 5-16-12-9h15zM80 40l-5 15H60l12 9-5 16 13-9 13 9-5-16 12-9H75z'/%3E%3C/g%3E%3C/svg%3E");
+  background-attachment: fixed;
+  background-size: auto, auto, auto, 80px 80px;
+}
+
+.bg-portal-hero,
+.bg-islamic-pattern {
+  background: transparent;
+}
+
+/* Unified Brand Gold Gradient for Headings & Accents */
+.text-copper-gold {
+  background: linear-gradient(135deg, #fef08a 0%, #f59e0b 50%, #d97706 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gold-light {
+  color: #fde68a;
+}
+
+.border-copper {
+  border-color: rgba(245, 158, 11, 0.35);
+}
+
+.border-emerald-gold {
+  border-image: linear-gradient(to right, rgba(245, 158, 11, 0.6), rgba(16, 185, 129, 0.5), rgba(245, 158, 11, 0.6)) 1;
+}
+
+/* Hide scrollbar for clean horizontal nav strips */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Custom Scrollbar styled with Unified Brand Emerald & Gold */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #030712;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #065f46;
+  border-radius: 9999px;
+  border: 2px solid #030712;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #f59e0b;
+}
+
+/* Endless Marquee Ticker for Reviews */
+@keyframes ticker-rtl {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(50%);
+  }
+}
+
+.animate-ticker-rtl {
+  display: flex;
+  width: max-content;
+  animation: ticker-rtl 95s linear infinite;
+}
+
+.animate-ticker-rtl:hover {
+  animation-play-state: paused;
+}
+
+/* Realistic White Dove Wing Flapping & Flight Motion Keyframes */
+@keyframes wing-flap-front {
+  0%, 100% {
+    transform: rotate(0deg) scaleY(1) translateY(0);
+  }
+  50% {
+    transform: rotate(-35deg) scaleY(0.55) translateY(5px);
+  }
+}
+
+@keyframes wing-flap-back {
+  0%, 100% {
+    transform: rotate(0deg) scaleY(1) translateY(0);
+  }
+  50% {
+    transform: rotate(-30deg) scaleY(0.6) translateY(4px);
+  }
+}
+
+@keyframes dove-fly-glide {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(-3deg);
+  }
+}
+
+.animate-wing-front {
+  animation: wing-flap-front 0.85s infinite ease-in-out;
+}
+
+.animate-wing-back {
+  animation: wing-flap-back 0.85s infinite ease-in-out;
+}
+
+.animate-wing-front-fast {
+  animation: wing-flap-front 0.45s infinite ease-in-out;
+}
+
+.animate-wing-back-fast {
+  animation: wing-flap-back 0.45s infinite ease-in-out;
+}
+
+.animate-dove-glide {
+  animation: dove-fly-glide 3.8s infinite ease-in-out;
+}
+
+/* Global Content & Image Protection Rules (Anti-Screenshot / Anti-Copy) */
+img {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+  pointer-events: auto;
+}
+
+/* User Text Selection Protection for Client Data */
+.protected-client-content {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Print Protection (hides content if user attempts Ctrl+P or print-to-PDF screenshot) */
+@media print {
+  body {
+    background-color: #030712 !important;
+    color: #f59e0b !important;
+  }
+  body * {
+    display: none !important;
+  }
+  body::before {
+    content: "🛡️ محتوى محمي: غير مسموح بطباعة أو تصوير هذه الصفحة - جميع الحقوق محفوظة لمنصة تفسير الأحلام للشيخ د. أحمد الشريف 2026";
+    display: block !important;
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 20%;
+    color: #f59e0b;
+    padding: 30px;
+    direction: rtl;
+    line-height: 1.8;
+  }
+}
+

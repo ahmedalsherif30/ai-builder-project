@@ -1,0 +1,20 @@
+{
+  "short_name": "تفسير الأحلام",
+  "name": "منصة تفسير الأحلام والإرشاد الروحي - الشيخ أحمد الشريف",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌙</text></svg>",
+      "type": "image/svg+xml",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#000000",
+  "theme_color": "#020617",
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "ar",
+  "dir": "rtl",
+  "description": "منصة عربية رائدة في التأويل الروحي للأحلام والمشاهدات المنامية برؤية منهجية إسلامية"
+}
