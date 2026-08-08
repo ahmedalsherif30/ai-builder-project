@@ -85,6 +85,9 @@ export const UserAuthModal: React.FC<UserAuthModalProps> = ({
 
       const data = await res.json();
       if (res.ok && data.user) {
+        if (data.token) {
+          localStorage.setItem('explaining_dream_auth_token', data.token);
+        }
         setConfirmedUser(data.user);
         setSocialModalProvider(null);
       } else {
@@ -129,6 +132,9 @@ export const UserAuthModal: React.FC<UserAuthModalProps> = ({
 
       const data = await res.json();
       if (res.ok && data.user) {
+        if (data.token) {
+          localStorage.setItem('explaining_dream_auth_token', data.token);
+        }
         setConfirmedUser(data.user);
       } else {
         setErrorMsg(data.error || 'لم نتمكن من إتمام الطلب.');

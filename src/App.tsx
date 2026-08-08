@@ -32,6 +32,7 @@ const UserAuthModal = lazy(() => import('./components/UserAuthModal').then(m => 
 const ClientDashboardModal = lazy(() => import('./components/ClientDashboardModal').then(m => ({ default: m.ClientDashboardModal })));
 const ShareAndRewardsModal = lazy(() => import('./components/ShareAndRewardsModal').then(m => ({ default: m.ShareAndRewardsModal })));
 const ClientReviewsSection = lazy(() => import('./components/ClientReviewsSection').then(m => ({ default: m.ClientReviewsSection })));
+const SpiritualNewsletterDigestModal = lazy(() => import('./components/SpiritualNewsletterDigestModal').then(m => ({ default: m.SpiritualNewsletterDigestModal })));
 
 const SectionFallback = () => (
   <div className="py-20 flex flex-col items-center justify-center gap-3 text-amber-400">
@@ -53,6 +54,28 @@ export default function App() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authReason, setAuthReason] = useState<string>('');
   const [referralWelcomeMsg, setReferralWelcomeMsg] = useState<string>('');
+  const [isNewsletterDigestOpen, setIsNewsletterDigestOpen] = useState(false);
+  const [newsletterDigestData, setNewsletterDigestData] = useState<{
+    code?: string;
+    contact?: string;
+    digest?: any;
+  }>({});
+
+  const handleOpenNewsletterDigest = useCallback((data?: { code?: string; contact?: string; digest?: any }) => {
+    if (data) {
+      setNewsletterDigestData(data);
+    } else {
+      fetch('/api/newsletter/digest')
+        .then(res => res.json())
+        .then(resData => {
+          if (resData.success) {
+            setNewsletterDigestData(prev => ({ ...prev, digest: resData.digest }));
+          }
+        })
+        .catch(err => console.error('Error fetching digest:', err));
+    }
+    setIsNewsletterDigestOpen(true);
+  }, []);
 
   useEffect(() => {
     // Check URL parameters for referral code
@@ -204,6 +227,7 @@ export default function App() {
         }}
         onOpenClientDashboard={() => setIsClientDashboardOpen(true)}
         onOpenShareRewards={() => setIsShareRewardsOpen(true)}
+        onOpenNewsletterDigest={() => handleOpenNewsletterDigest()}
       />
 
       {/* Referral Welcome Notification Banner */}
@@ -269,8 +293,10 @@ export default function App() {
                 onOrderSuccess={() => setActiveTab('journal')}
               />
 
-              {/* 7. Verified Client Reviews & Ratings Section (آراء وتقييمات المستفيدين) */}
+              {/* 7. Single-Row Compact Interactive Client Reviews Section */}
               <ClientReviewsSection onOpenConsultation={() => setActiveTab('services')} />
+
+
             </div>
           )}
 
@@ -439,6 +465,22 @@ export default function App() {
           <SubscribeChannelModal
             isOpen={isSubscribeOpen}
             onClose={() => setIsSubscribeOpen(false)}
+            onOpenDigest={handleOpenNewsletterDigest}
+          />
+        )}
+
+        {/* Spiritual Newsletter Dynamic News Digest Modal */}
+        {isNewsletterDigestOpen && (
+          <SpiritualNewsletterDigestModal
+            isOpen={isNewsletterDigestOpen}
+            onClose={() => setIsNewsletterDigestOpen(false)}
+            subscriberCode={newsletterDigestData.code || 'NEWS-2026-X800'}
+            subscriberContact={newsletterDigestData.contact || user?.email || ''}
+            digestData={newsletterDigestData.digest}
+            onNavigateTab={(tab) => {
+              setActiveTab(tab);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
           />
         )}
 
@@ -468,7 +510,12 @@ export default function App() {
       </Suspense>
 
       {/* Footer */}
-      <Footer setActiveTab={setActiveTab} onOpenAdmin={() => setIsAdminOpen(true)} user={user} />
+      <Footer
+        setActiveTab={setActiveTab}
+        onOpenAdmin={() => setIsAdminOpen(true)}
+        user={user}
+        onOpenNewsletterDigest={handleOpenNewsletterDigest}
+      />
 
     </div>
   );

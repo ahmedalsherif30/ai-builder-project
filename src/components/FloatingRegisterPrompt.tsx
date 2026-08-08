@@ -71,7 +71,7 @@ export const FloatingRegisterPrompt: React.FC<FloatingRegisterPromptProps> = ({
             هل ترغب في التسجيل بالمنصة؟ 🌟
           </h3>
           <p className="text-xs text-slate-300 leading-relaxed mb-3">
-            سجّل حسابك المجاني الآن لتوثيق رؤاك في ملفك الروحي الشخصي واستلام <span className="text-amber-300 font-bold">3 تفسيرات مجانية</span> عند التسجيل!
+            سجّل حسابك المجاني الآن لتوثيق رؤياك في ملفك الروحي الشخصي واستلام <span className="text-amber-300 font-bold">3 تفسيرات مجانية</span> عند التسجيل!
           </p>
         </div>
       </div>
@@ -84,7 +84,7 @@ export const FloatingRegisterPrompt: React.FC<FloatingRegisterPromptProps> = ({
         </div>
         <div className="flex items-center gap-1.5 text-amber-300">
           <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
-          <span>ملف روحي مشفر لحفظ وتوثيق كافة رؤاك</span>
+          <span>ملف روحي مشفر لحفظ وتوثيق كافة رؤياك</span>
         </div>
       </div>
 

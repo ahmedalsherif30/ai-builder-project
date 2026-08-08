@@ -4,31 +4,55 @@ import { Send, Smartphone, Mail, CheckCircle2, X, Bell } from 'lucide-react';
 interface SubscribeChannelModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onOpenDigest?: (data: { code: string; contact: string; digest?: any }) => void;
 }
 
 export const SubscribeChannelModal: React.FC<SubscribeChannelModalProps> = ({
   isOpen,
   onClose,
+  onOpenDigest,
 }) => {
   const [channel, setChannel] = useState<'whatsapp' | 'telegram' | 'email'>('whatsapp');
   const [contactInfo, setContactInfo] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (contactInfo) {
-      // Send instant notification via WhatsApp link to Sheikh Ahmed
-      const channelLabel = channel === 'whatsapp' ? 'واتساب' : channel === 'telegram' ? 'تيليجرام' : 'البريد الإلكتروني';
-      const msg = `أهلاً شيخ أحمد الشريف، قام عميل جديد بالاشتراك في قناة النشرات والتنبيهات المنامية:\n- وسيلة التواصل: ${channelLabel}\n- بيانات الاتصال: ${contactInfo}`;
-      window.open(`https://wa.me/201558955525?text=${encodeURIComponent(msg)}`, '_blank');
+    if (!contactInfo || !contactInfo.trim()) return;
 
-      setSubscribed(true);
-      setTimeout(() => {
-        setSubscribed(false);
-        onClose();
-      }, 3000);
+    setLoading(true);
+    try {
+      const res = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          emailOrContact: contactInfo.trim(),
+          channel,
+          userName: ''
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSubscribed(true);
+        setTimeout(() => {
+          setSubscribed(false);
+          onClose();
+          if (onOpenDigest) {
+            onOpenDigest({
+              code: data.subscriber?.subscriberCode || 'NEWS-2026-X800',
+              contact: contactInfo.trim(),
+              digest: data.digest
+            });
+          }
+        }, 1200);
+      }
+    } catch (err) {
+      console.error('Subscribe error:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -130,10 +154,11 @@ export const SubscribeChannelModal: React.FC<SubscribeChannelModalProps> = ({
 
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-amber-500 to-emerald-500 text-slate-950 font-bold py-3 rounded-xl hover:from-amber-400 hover:to-emerald-400 transition cursor-pointer flex items-center justify-center gap-1.5"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-amber-500 to-emerald-500 text-slate-950 font-bold py-3 rounded-xl hover:from-amber-400 hover:to-emerald-400 transition cursor-pointer flex items-center justify-center gap-1.5 disabled:opacity-50"
             >
               <Send className="w-4 h-4" />
-              <span>اشتراك مجاني الآن</span>
+              <span>{loading ? 'جاري الاشتراك وتجهيز الملف...' : 'اشتراك مجاني واستلام الملف الإخباري'}</span>
             </button>
 
           </form>

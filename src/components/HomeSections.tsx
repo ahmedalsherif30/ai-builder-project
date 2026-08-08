@@ -70,7 +70,7 @@ export const FeaturesSection: React.FC<SectionProps> = React.memo(({ onNavigateT
     {
       icon: Heart,
       title: 'ملف شخصي روحي مشفر',
-      desc: 'سجل آمن يتيح لك توثيق رؤاك ومتابعة مدى تحقق دلالاتها في الواقع عبر الزمن.',
+      desc: 'سجل آمن يتيح لك توثيق رؤياك ومتابعة مدى تحقق دلالاتها في الواقع عبر الزمن.',
     },
     {
       icon: BookOpen,
@@ -264,7 +264,7 @@ export const HomepageCtaSection: React.FC<SectionProps> = React.memo(({ onNaviga
       <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-emerald-600 rounded-3xl p-8 sm:p-12 text-slate-950 text-center space-y-5 shadow-2xl relative overflow-hidden">
         <div className="max-w-2xl mx-auto space-y-3">
           <span className="inline-block bg-slate-950 text-amber-300 px-3.5 py-1 rounded-full text-xs font-bold font-serif shadow-md">
-            ابدأ رحلة فهم رؤاك الآن ✨
+            ابدأ رحلة فهم رؤياك الآن ✨
           </span>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold font-serif leading-tight">
             جاهز لفك رموز منامك واكتشاف معانيه الروحية؟

@@ -99,17 +99,21 @@ export const HeroSection: React.FC<HeroSectionProps> = React.memo(({
         )}
 
         {/* Main Headline & Subtitle */}
-        <div className="text-center max-w-4xl mx-auto space-y-3.5 pt-2">
+        <div className="text-center max-w-5xl mx-auto space-y-3.5 pt-2">
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500/20 via-emerald-950 to-amber-500/20 text-amber-300 border border-amber-500/40 px-4 py-1.5 rounded-full text-xs sm:text-sm font-bold font-serif shadow-lg">
             <Sparkles className="w-4 h-4 text-amber-400" />
-            <span>المنصة العربية الأولى والجامعة لتأويل الأحلام، توثيق الرؤى، ومتابعة دلالاتها</span>
+            <span>هل كل ما تراه بمنامك له معنى وأثر</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-100 font-serif leading-tight tracking-wide">
-            منصة <span className="text-copper-gold">تأويل الأحلام والملف الروحي الشخصي</span>
+          <h1 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-extrabold text-slate-100 font-serif leading-tight tracking-tight whitespace-nowrap">
+            منصة <span className="text-copper-gold">تفسير الأحلام والتأويل</span> بملف شخصي <span className="text-emerald-400">روحي</span>
           </h1>
           <p className="text-sm sm:text-base text-amber-200/90 font-serif leading-relaxed max-w-3xl mx-auto">
-            أول وأكبر منصة عربية تجمع بين <b>التأويل الروحي المعتمد</b>، <b>توثيق الرؤى المنامية</b>، و<b>متابعة دلالاتها وتحققها في الواقع</b> عبر ملف شخصي روحي مشفّر لكل عميل، بمراجعة وإشراف الباحث والكاتب د. أحمد الشريف.
+            <b>أول وأكبر منصة عربية للتأويل الروحي.</b>
+            <br />
+            سجّل رؤيتك، احتفظ بها، وافهم دلالاتها وأسباب تحققها في الواقع في <b>ملف شخصي روحي مشفّر خاص بك</b>.
+            <br />
+            بإشراف ومراجعة الباحث والكاتب <b>د. أحمد الشريف</b>.
           </p>
         </div>
 
@@ -118,53 +122,53 @@ export const HeroSection: React.FC<HeroSectionProps> = React.memo(({
           <div className="bg-slate-950/95 border border-amber-500/50 rounded-3xl p-5 sm:p-7 shadow-2xl backdrop-blur-xl relative space-y-5">
             
             {/* Mode Switcher Tabs */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pb-3 border-b border-emerald-900/60 w-full">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-1.5 sm:gap-2 pb-3 border-b border-emerald-900/60 w-full">
               <button
                 onClick={() => setActiveHeroMode('ai')}
-                className={`w-full justify-center px-2.5 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold font-serif transition cursor-pointer flex items-center gap-1.5 sm:gap-2 whitespace-nowrap shadow-sm ${
+                className={`w-full justify-center px-2 sm:px-3 py-2 rounded-xl text-[11px] sm:text-xs lg:text-xs xl:text-sm font-bold font-serif transition cursor-pointer flex items-center gap-1 sm:gap-1.5 whitespace-nowrap shadow-sm ${
                   activeHeroMode === 'ai'
                     ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-lg'
                     : 'bg-slate-900 text-slate-300 border border-emerald-900 hover:border-emerald-700 hover:text-amber-300'
                 }`}
               >
-                <Sparkles className="w-4 h-4 shrink-0" />
-                <span className="truncate">تفسير فوري بالذكاء الاصطناعي</span>
+                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                <span>تفسير فوري بالذكاء الاصطناعي</span>
               </button>
 
               <button
                 onClick={() => setActiveHeroMode('dictionary')}
-                className={`w-full justify-center px-2.5 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold font-serif transition cursor-pointer flex items-center gap-1.5 sm:gap-2 whitespace-nowrap shadow-sm ${
+                className={`w-full justify-center px-2 sm:px-3 py-2 rounded-xl text-[11px] sm:text-xs lg:text-xs xl:text-sm font-bold font-serif transition cursor-pointer flex items-center gap-1 sm:gap-1.5 whitespace-nowrap shadow-sm ${
                   activeHeroMode === 'dictionary'
                     ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-lg'
                     : 'bg-slate-900 text-slate-300 border border-emerald-900 hover:border-emerald-700 hover:text-amber-300'
                 }`}
               >
-                <Search className="w-4 h-4 shrink-0" />
-                <span className="truncate">موسوعة الرموز</span>
+                <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                <span>موسوعة الرموز</span>
               </button>
 
               <button
                 onClick={() => setActiveHeroMode('consultation')}
-                className={`w-full justify-center px-2.5 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold font-serif transition cursor-pointer flex items-center gap-1.5 sm:gap-2 whitespace-nowrap shadow-sm ${
+                className={`w-full justify-center px-2 sm:px-3 py-2 rounded-xl text-[11px] sm:text-xs lg:text-xs xl:text-sm font-bold font-serif transition cursor-pointer flex items-center gap-1 sm:gap-1.5 whitespace-nowrap shadow-sm ${
                   activeHeroMode === 'consultation'
                     ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-lg'
                     : 'bg-slate-900 text-slate-300 border border-emerald-900 hover:border-emerald-700 hover:text-amber-300'
                 }`}
               >
-                <Mic className="w-4 h-4 shrink-0" />
-                <span className="truncate">استشارة صوتية من أحمد الشريف</span>
+                <Mic className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                <span>استشارة صوتية من د. أحمد</span>
               </button>
 
               <button
                 onClick={() => setActiveHeroMode('book')}
-                className={`w-full justify-center px-2.5 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold font-serif transition cursor-pointer flex items-center gap-1.5 sm:gap-2 whitespace-nowrap shadow-sm ${
+                className={`w-full justify-center px-2 sm:px-3 py-2 rounded-xl text-[11px] sm:text-xs lg:text-xs xl:text-sm font-bold font-serif transition cursor-pointer flex items-center gap-1 sm:gap-1.5 whitespace-nowrap shadow-sm ${
                   activeHeroMode === 'book'
                     ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-lg'
                     : 'bg-slate-900 text-slate-300 border border-emerald-900 hover:border-emerald-700 hover:text-amber-300'
                 }`}
               >
-                <BookOpen className="w-4 h-4 shrink-0" />
-                <span className="truncate">كتاب تأويلات روحية</span>
+                <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                <span>كتاب تأويلات روحية</span>
               </button>
             </div>
 

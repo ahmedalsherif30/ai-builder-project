@@ -209,6 +209,7 @@ export interface UserProfile {
   name: string;
   email: string;
   phone?: string;
+  token?: string;
   avatarUrl?: string;
   gender?: DreamerGender;
   maritalStatus?: MaritalStatus;

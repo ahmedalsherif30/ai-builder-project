@@ -43,25 +43,39 @@ interface AdminDashboardModalProps {
 }
 
 export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen, onClose, currentUser }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'customers' | 'subscriptions' | 'sales' | 'submitted_dreams' | 'broadcast' | 'site_settings'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'customers' | 'subscriptions' | 'sales' | 'submitted_dreams' | 'broadcast' | 'site_settings' | 'newsletter'>('overview');
   const [isLoading, setIsLoading] = useState(false);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState('');
+
+  // Spiritual Newsletter Admin State
+  const [newsletterSubscribers, setNewsletterSubscribers] = useState<any[]>([]);
+  const [newsletterDigestEdit, setNewsletterDigestEdit] = useState<any>(null);
+  const [newsletterSearch, setNewsletterSearch] = useState('');
+  const [digestSaveMsg, setDigestSaveMsg] = useState('');
 
   // Admin authentication state
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
   const [adminPinInput, setAdminPinInput] = useState('');
   const [pinError, setPinError] = useState('');
+  const [adminToken, setAdminToken] = useState<string>(() => localStorage.getItem('explaining_dream_admin_token') || '');
 
   const getAdminHeaders = () => {
+    const token = adminToken || localStorage.getItem('explaining_dream_admin_token') || '';
     return {
       'Content-Type': 'application/json',
-      'x-user-role': isAdminUser(currentUser) ? 'admin' : (currentUser?.role || 'member'),
-      'x-user-email': currentUser?.email || (isAdminUser(currentUser) ? ADMIN_EMAIL : '')
+      'Authorization': `Bearer ${token}`,
+      'x-auth-token': token
     };
   };
 
   useEffect(() => {
-    if (isAdminUser(currentUser)) {
+    const savedToken = localStorage.getItem('explaining_dream_admin_token');
+    if (savedToken) {
+      setAdminToken(savedToken);
+      setIsAdminAuthenticated(true);
+    } else if (isAdminUser(currentUser) && currentUser?.token) {
+      setAdminToken(currentUser.token);
+      localStorage.setItem('explaining_dream_admin_token', currentUser.token);
       setIsAdminAuthenticated(true);
     }
   }, [currentUser]);
@@ -79,7 +93,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
   // Broadcast Mass Communication States
   const [broadcastTarget, setBroadcastTarget] = useState<'all' | 'vip' | 'free' | 'expiring'>('all');
   const [broadcastSubject, setBroadcastSubject] = useState('إشعار وتحديث هام - منصة أحمد الشريف لتفسير الأحلام');
-  const [broadcastMessage, setBroadcastMessage] = useState('أهلاً وسهلاً أ/ {name}، نود تذكيركم بالاستفادة من التفسير القرآني والروحي المباشر ورؤاك المسجلة بحسابكم الشخصي بالمنصة.');
+  const [broadcastMessage, setBroadcastMessage] = useState('أهلاً وسهلاً أ/ {name}، نود تذكيركم بالاستفادة من التفسير القرآني والروحي المباشر ورؤياك المسجلة بحسابكم الشخصي بالمنصة.');
   const [broadcastSuccessMsg, setBroadcastSuccessMsg] = useState('');
 
   const [settings, setSettings] = useState<SiteSettings>({
@@ -235,12 +249,13 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
     setIsLoading(true);
     try {
       const headers = getAdminHeaders();
-      const [ordersRes, custRes, logsRes, settingsRes, dreamsRes] = await Promise.all([
+      const [ordersRes, custRes, logsRes, settingsRes, dreamsRes, newsRes] = await Promise.all([
         fetch('/api/admin/orders', { headers }),
         fetch('/api/admin/customers', { headers }),
         fetch('/api/admin/activity-logs', { headers }),
         fetch('/api/site-settings'),
-        fetch('/api/admin/dreams', { headers })
+        fetch('/api/admin/dreams', { headers }),
+        fetch('/api/admin/newsletter/subscribers', { headers })
       ]);
 
       if (ordersRes.ok) setOrders(await ordersRes.json());
@@ -251,6 +266,13 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
         const dreamsData = await dreamsRes.json();
         setSubmittedDreams(dreamsData.dreams || []);
         setUnreadDreamsCount(dreamsData.unreadCount || 0);
+      }
+      if (newsRes.ok) {
+        const newsData = await newsRes.json();
+        setNewsletterSubscribers(newsData.subscribers || []);
+        if (newsData.digest) {
+          setNewsletterDigestEdit(newsData.digest);
+        }
       }
     } catch (err) {
       console.error('Failed to load admin data:', err);
@@ -302,10 +324,19 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
   };
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && (isAdminAuthenticated || isAdminUser(currentUser))) {
       fetchAllAdminData();
     }
-  }, [isOpen]);
+  }, [isOpen, isAdminAuthenticated, currentUser]);
+
+  // Live real-time polling every 10 seconds when admin modal is active and authenticated
+  useEffect(() => {
+    if (!isOpen || (!isAdminAuthenticated && !isAdminUser(currentUser))) return;
+    const intervalId = setInterval(() => {
+      fetchAllAdminData();
+    }, 10000);
+    return () => clearInterval(intervalId);
+  }, [isOpen, isAdminAuthenticated, currentUser]);
 
   if (!isOpen) return null;
 
@@ -502,13 +533,28 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
     return true;
   });
 
-  const handleAdminVerify = (e: React.FormEvent) => {
+  const handleAdminVerify = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (adminPinInput === 'pass@37760991' || adminPinInput === '2026' || adminPinInput === 'sherif2026') {
-      setIsAdminAuthenticated(true);
+    try {
       setPinError('');
-    } else {
-      setPinError('رمز الدخول السري غير صحيح. هذه اللوحة مخصصة لإدارة أحمد الشريف فقط.');
+      const res = await fetch('/api/auth/admin-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin: adminPinInput, email: 'ahmedalsherif30@gmail.com' })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.token) {
+        setPinError(data.error || 'رمز الدخول السري غير صحيح. هذه اللوحة مخصصة لإدارة أحمد الشريف فقط.');
+        return;
+      }
+      setAdminToken(data.token);
+      localStorage.setItem('explaining_dream_admin_token', data.token);
+      setIsAdminAuthenticated(true);
+      setTimeout(() => {
+        fetchAllAdminData();
+      }, 50);
+    } catch (err: any) {
+      setPinError('حدث خطأ أثناء الاتصال بالخادم لمصادقة الإدارة.');
     }
   };
 
@@ -706,6 +752,21 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
           >
             <Megaphone className="w-4 h-4 text-amber-400" />
             <span>مركز الرسائل والتذكيرات الجماعية</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('newsletter')}
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl transition cursor-pointer font-bold ${
+              activeTab === 'newsletter'
+                ? 'bg-amber-500 text-slate-950 shadow-md'
+                : 'text-slate-300 hover:text-white hover:bg-slate-900'
+            }`}
+          >
+            <Send className="w-4 h-4 text-emerald-400" />
+            <span>النشرة الروحية والملف الإخباري</span>
+            <span className="bg-emerald-900 border border-emerald-700 text-emerald-300 px-1.5 py-0.2 text-[10px] rounded-full font-mono font-bold">
+              {newsletterSubscribers.length}
+            </span>
           </button>
 
           <button
@@ -2415,7 +2476,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                 <div className="flex items-center gap-2 self-end sm:self-auto flex-wrap">
                   {viewingCustomerDreams.customerPhone && (
                     <a
-                      href={`https://wa.me/${viewingCustomerDreams.customerPhone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`السلام عليكم ورحمة الله وبركاته، عزيزنا أ/ ${viewingCustomerDreams.customerName}، تواصل معكم الشيخ أحمد الشريف بخصوص تفسير رؤاكم وأحلامكم المسجلة بالمنصة.`)}`}
+                      href={`https://wa.me/${viewingCustomerDreams.customerPhone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`السلام عليكم ورحمة الله وبركاته، عزيزنا أ/ ${viewingCustomerDreams.customerName}، تواصل معكم الشيخ أحمد الشريف بخصوص تفسير رؤياكم وأحلامكم المسجلة بالمنصة.`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 cursor-pointer shadow"

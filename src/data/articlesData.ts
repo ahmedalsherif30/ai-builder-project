@@ -1,5 +1,7 @@
 import { Article } from '../types';
 import { EXTRA_ARTICLE_TOPICS } from './extraTopics';
+import { getRelevantArticleImageUrl } from '../utils/imageUtils';
+import { calculateReadingTime } from '../utils/markdownUtils';
 
 // 210 High-resolution, distinct photo IDs from Unsplash ensuring every single article gets a 100% unique image
 const UNIQUE_UNSPLASH_IDS = [
@@ -69,8 +71,7 @@ const UNIQUE_UNSPLASH_IDS = [
 ];
 
 function getImageUrl(idx: number, cat?: string, title?: string): string {
-  const photoId = UNIQUE_UNSPLASH_IDS[idx % UNIQUE_UNSPLASH_IDS.length];
-  return `https://images.unsplash.com/${photoId}?auto=format&fit=crop&q=85&w=1200&sig=art_${idx + 1}`;
+  return getRelevantArticleImageUrl(idx, title || '', cat || '');
 }
 
 // 210 Unique, non-repetitive spiritual & dream interpretation topics from Sheikh Ahmed Al-Sherif's book
@@ -288,7 +289,9 @@ export const ARTICLE_TOPICS = [
   { title: "📜 رمز رؤية العثور على دفتر مذكرات قديم به أدعية مستجابة", cat: "أسرار المنام", chapter: "الفصل 210: الأدعية المأثورة والبركة" }
 ];
 
-export const MOCK_ARTICLES: Article[] = ARTICLE_TOPICS.map((topic, index) => {
+const ALL_365_TOPICS = [...ARTICLE_TOPICS, ...EXTRA_ARTICLE_TOPICS].slice(0, 365);
+
+export const MOCK_ARTICLES: Article[] = ALL_365_TOPICS.map((topic, index) => {
   const artNum = index + 1;
   const slug = `article-${artNum}-${topic.title.replace(/[^\u0621-\u064A0-9a-zA-Z]/g, '-').replace(/-+/g, '-')}`;
   
@@ -465,7 +468,7 @@ export const MOCK_ARTICLES: Article[] = ARTICLE_TOPICS.map((topic, index) => {
 `,
     author: 'أحمد الشريف',
     category: topic.cat,
-    readTime: `${4 + (index % 4)} دقائق`,
+    readTime: calculateReadingTime(`### مقدمة ومدخل إيماني مبارك... ${topic.title} ${topic.chapter}`),
     publishedAt,
     imageUrl: getImageUrl(index, topic.cat, topic.title),
     tags: [

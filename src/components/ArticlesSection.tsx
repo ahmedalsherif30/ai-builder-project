@@ -3,40 +3,34 @@ import {
   BookOpen,
   Clock,
   Eye,
-  X,
   ArrowLeft,
   Search,
   User as UserIcon,
-  Calendar,
   Sparkles,
   CheckCircle2,
-  Code,
-  Copy,
-  Check,
-  HelpCircle,
-  Tag,
-  ShieldCheck,
   TrendingUp,
   Layers,
   ChevronRight,
-  ChevronLeft
+  ChevronLeft,
+  ShieldCheck,
+  Calendar
 } from 'lucide-react';
 import { MOCK_ARTICLES } from '../data/mockData';
 import { Article, UserProfile } from '../types';
-import { safeCopyToClipboard } from '../utils/copyToClipboard';
+import { ArticleDetailModal } from './ArticleDetailModal';
+import { sanitizeMarkdownText } from '../utils/markdownUtils';
 
 interface ArticlesSectionProps {
   user?: UserProfile | null;
+  onNavigateToTab?: (tab: string) => void;
 }
 
-export const ArticlesSection: React.FC<ArticlesSectionProps> = ({ user }) => {
+export const ArticlesSection: React.FC<ArticlesSectionProps> = ({ user, onNavigateToTab }) => {
   const isAdmin = user?.role === 'admin';
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [activeTab, setActiveTab] = useState<'all' | 'today' | 'schedule'>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('الكل');
   const [searchQuery, setSearchQuery] = useState('');
-  const [modalSubTab, setModalSubTab] = useState<'content' | 'faq' | 'seo'>('content');
-  const [copiedSchema, setCopiedSchema] = useState(false);
   const [visibleCount, setVisibleCount] = useState(12);
 
   // 365-Day Daily Schedule Engine state
@@ -90,68 +84,6 @@ export const ArticlesSection: React.FC<ArticlesSectionProps> = ({ user }) => {
     ? getDailyArticles(selectedScheduleDay) // Articles for selected scheduled day
     : filteredArticles;
 
-  // Generate JSON-LD Schema for selected article
-  const getArticleSchema = (art: Article) => {
-    return JSON.stringify(
-      {
-        '@context': 'https://schema.org',
-        '@graph': [
-          {
-            '@type': 'Article',
-            '@id': `https://explainingdream.com/articles/${art.slug}#article`,
-            headline: art.title,
-            description: art.excerpt,
-            author: {
-              '@type': 'Person',
-              name: art.author,
-              jobTitle: 'باحث ومؤلف كتاب تأويلات روحية (طبعة 2026)',
-            },
-            publisher: {
-              '@type': 'Organization',
-              name: 'منصة تفسير الأحلام - أحمد الشريف',
-              logo: 'https://explainingdream.com/logo.png',
-            },
-            datePublished: art.publishedAt,
-            mainEntityOfPage: `https://explainingdream.com/articles/${art.slug}`,
-            image: art.imageUrl,
-            articleSection: art.category,
-            citation: 'كتاب تأويلات روحية لفهم المشاهدات المنامية - طبعة 2026 أحمد الشريف',
-          },
-          {
-            '@type': 'FAQPage',
-            mainEntity: art.faqs
-              ? art.faqs.map((f) => ({
-                  '@type': 'Question',
-                  name: f.question,
-                  acceptedAnswer: {
-                    '@type': 'Answer',
-                    text: f.answer,
-                  },
-                }))
-              : [
-                  {
-                    '@type': 'Question',
-                    name: `ما هو منهج أحمد الشريف في تفسير ${art.title}؟`,
-                    acceptedAnswer: {
-                      '@type': 'Answer',
-                      text: `يعتمد على الضوابط الشرعية والقواعد المعتمدة في كتاب "تأويلات روحية لفهم المشاهدات المنامية" (طبعة 2026) بالتنسيق بين سياق الرائي وشواهد القرآن والسنة.`,
-                    },
-                  },
-                ],
-          },
-        ],
-      },
-      null,
-      2
-    );
-  };
-
-  const handleCopySchema = async (art: Article) => {
-    await safeCopyToClipboard(getArticleSchema(art));
-    setCopiedSchema(true);
-    setTimeout(() => setCopiedSchema(false), 2000);
-  };
-
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
       {/* Top Banner */}
@@ -180,12 +112,12 @@ export const ArticlesSection: React.FC<ArticlesSectionProps> = ({ user }) => {
           {isAdmin ? (
             <div className="flex items-center gap-2 bg-slate-900/90 border border-amber-500/50 px-4 py-2.5 rounded-2xl text-xs font-mono text-amber-300 shadow-md shrink-0">
               <TrendingUp className="w-4 h-4 text-amber-400" />
-              <span>لوحة الإدارة: محرك SEO والنشر (210 مقالاً)</span>
+              <span>لوحة الإدارة: محرك SEO والنشر ({MOCK_ARTICLES.length} مقالاً)</span>
             </div>
           ) : (
             <div className="flex items-center gap-2 bg-slate-900/90 border border-emerald-800 px-4 py-2 rounded-2xl text-xs font-serif text-amber-300 shadow-md shrink-0">
               <ShieldCheck className="w-4 h-4 text-amber-400" />
-              <span>طبعة 2026 المعتمدة</span>
+              <span>طبعة 2026 المعتمدة (365 مقالاً)</span>
             </div>
           )}
         </div>
@@ -196,7 +128,7 @@ export const ArticlesSection: React.FC<ArticlesSectionProps> = ({ user }) => {
             <Layers className="w-5 h-5 text-amber-400 shrink-0" />
             <div>
               <div className="text-[10px] text-slate-400">المقالات المرجعية</div>
-              <div className="font-bold text-slate-100 text-sm">210 مقالات شاملة وموثقة</div>
+              <div className="font-bold text-slate-100 text-sm">{MOCK_ARTICLES.length} مقالاً كاملاً وموثقاً</div>
             </div>
           </div>
 
@@ -366,7 +298,6 @@ export const ArticlesSection: React.FC<ArticlesSectionProps> = ({ user }) => {
             key={art.id}
             onClick={() => {
               setSelectedArticle(art);
-              setModalSubTab('content');
             }}
             className="bg-slate-900/90 border border-emerald-900/60 hover:border-amber-400/60 rounded-3xl overflow-hidden shadow-xl transition duration-300 cursor-pointer group flex flex-col justify-between"
           >
@@ -415,7 +346,7 @@ export const ArticlesSection: React.FC<ArticlesSectionProps> = ({ user }) => {
                 </h3>
 
                 <p className="text-xs text-slate-300 font-serif leading-relaxed line-clamp-3">
-                  {art.excerpt}
+                  {sanitizeMarkdownText(art.excerpt)}
                 </p>
               </div>
             </div>
@@ -445,251 +376,23 @@ export const ArticlesSection: React.FC<ArticlesSectionProps> = ({ user }) => {
         </div>
       )}
 
-      {/* Comprehensive Reader & SEO Modal */}
+      {/* Comprehensive Professional Reader & SEO Article Detail Modal */}
       {selectedArticle && (
-        <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-amber-500/50 rounded-3xl max-w-4xl w-full p-6 sm:p-8 space-y-6 max-h-[92vh] overflow-y-auto shadow-2xl relative flex flex-col dir-rtl">
-            
-            {/* Close button */}
-            <button
-              onClick={() => setSelectedArticle(null)}
-              className="absolute top-6 left-6 p-2 bg-slate-950 text-slate-300 hover:text-white rounded-xl border border-emerald-900 cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            {/* Modal Header */}
-            <div className="space-y-3 border-b border-emerald-900/60 pb-5 shrink-0">
-              <div className="inline-flex items-center gap-2 bg-emerald-950 border border-emerald-800 text-amber-300 px-3.5 py-1 rounded-full text-xs font-serif">
-                <BookOpen className="w-4 h-4 text-amber-400" />
-                <span>{selectedArticle.category}</span>
-                <span>•</span>
-                <span>كتاب تأويلات روحية (طبعة 2026)</span>
-              </div>
-
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-100 font-serif leading-snug">
-                {selectedArticle.title}
-              </h2>
-
-              <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 font-serif">
-                <span>المؤلف: <b className="text-amber-300">{selectedArticle.author}</b></span>
-                <span>تاريخ النشر: <b className="font-mono">{selectedArticle.publishedAt}</b></span>
-                <span>زمن القراءة: <b>{selectedArticle.readTime}</b></span>
-                {selectedArticle.bookChapterReference && (
-                  <span>المستند: <b className="text-emerald-300">{selectedArticle.bookChapterReference}</b></span>
-                )}
-              </div>
-            </div>
-
-            {/* Modal Navigation Sub-Tabs */}
-            <div className="flex items-center gap-2.5 border-b border-emerald-900/60 pb-3 shrink-0">
-              <button
-                onClick={() => setModalSubTab('content')}
-                className={`px-4 py-2 rounded-xl text-xs font-serif font-bold transition cursor-pointer flex items-center gap-2 ${
-                  modalSubTab === 'content'
-                    ? 'bg-amber-500 text-slate-950'
-                    : 'bg-slate-950 text-slate-300 border border-emerald-900'
-                }`}
-              >
-                <BookOpen className="w-4 h-4" />
-                <span>مضمون المقال الشامل</span>
-              </button>
-
-              <button
-                onClick={() => setModalSubTab('faq')}
-                className={`px-4 py-2 rounded-xl text-xs font-serif font-bold transition cursor-pointer flex items-center gap-2 ${
-                  modalSubTab === 'faq'
-                    ? 'bg-amber-500 text-slate-950'
-                    : 'bg-slate-950 text-slate-300 border border-emerald-900'
-                }`}
-              >
-                <HelpCircle className="w-4 h-4" />
-                <span>الأسئلة الشائعة (FAQ)</span>
-              </button>
-
-              {isAdmin && (
-                <button
-                  onClick={() => setModalSubTab('seo')}
-                  className={`px-4 py-2 rounded-xl text-xs font-serif font-bold transition cursor-pointer flex items-center gap-2 ${
-                    modalSubTab === 'seo'
-                      ? 'bg-amber-500 text-slate-950'
-                      : 'bg-slate-950 text-slate-300 border border-emerald-900'
-                  }`}
-                >
-                  <Code className="w-4 h-4" />
-                  <span>بيانات SEO والـ Schema (للإدارة)</span>
-                </button>
-              )}
-            </div>
-
-            {/* Modal Body depending on active sub-tab */}
-            <div className="overflow-y-auto space-y-4 text-xs sm:text-sm font-serif text-slate-200 leading-relaxed pr-1">
-              
-              {modalSubTab === 'content' && (
-                <div className="space-y-5">
-                  
-                  {/* Book Citation Reference Box */}
-                  <div className="bg-emerald-950/80 border border-emerald-800 p-4 rounded-2xl text-xs text-emerald-200 font-serif flex items-start gap-3 shadow-inner">
-                    <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-                    <div>
-                      <b>توثيق وحصرية المرجعية:</b> هذا المقال مستل وموثق مباشرة من <b>"{selectedArticle.bookChapterReference || 'كتاب تأويلات روحية لفهم المشاهدات المنامية'}" (طبعة 2026)</b> للمؤلف أحمد الشريف، ويدخل ضمن موسوعة التفسير المعتمدة للمنصة.
-                    </div>
-                  </div>
-
-                  {/* Image cover */}
-                  <div className="rounded-2xl overflow-hidden border border-emerald-900/60 max-h-72">
-                    <img
-                      src={selectedArticle.imageUrl}
-                      alt={selectedArticle.title}
-                      loading="lazy"
-                      decoding="async"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.currentTarget.src = 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=1200';
-                      }}
-                    />
-                  </div>
-
-                  {/* Main text content */}
-                  <div className="bg-slate-950 border border-emerald-900/80 p-6 rounded-3xl space-y-4 whitespace-pre-line text-slate-200 font-serif leading-relaxed text-sm sm:text-base">
-                    {selectedArticle.content}
-                  </div>
-
-                  {/* Tags */}
-                  <div className="flex flex-wrap items-center gap-2 pt-2">
-                    <Tag className="w-4 h-4 text-amber-400" />
-                    {selectedArticle.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="bg-slate-950 border border-emerald-900 text-slate-300 text-xs px-3 py-1 rounded-xl"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-
-                </div>
-              )}
-
-              {modalSubTab === 'faq' && (
-                <div className="space-y-4">
-                  <h4 className="text-sm font-bold text-amber-300 font-serif">
-                    الأسئلة الشائعة والإجابات الشرعية المستندة لكتاب تأويلات روحية:
-                  </h4>
-
-                  <div className="space-y-3">
-                    {selectedArticle.faqs && selectedArticle.faqs.length > 0 ? (
-                      selectedArticle.faqs.map((faq, idx) => (
-                        <div key={idx} className="bg-slate-950 border border-emerald-900 p-5 rounded-2xl space-y-2">
-                          <div className="font-bold text-slate-100 text-sm flex items-center gap-2">
-                            <HelpCircle className="w-4.5 h-4.5 text-amber-400 shrink-0" />
-                            <span>{faq.question}</span>
-                          </div>
-                          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed pr-6">
-                            {faq.answer}
-                          </p>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="bg-slate-950 border border-emerald-900 p-5 rounded-2xl space-y-2">
-                        <div className="font-bold text-slate-100 text-sm flex items-center gap-2">
-                          <HelpCircle className="w-4.5 h-4.5 text-amber-400 shrink-0" />
-                          <span>ما هو التوجيه الرئيسي في هذا الباب؟</span>
-                        </div>
-                        <p className="text-xs sm:text-sm text-slate-300 leading-relaxed pr-6">
-                          يوضح كتاب "تأويلات روحية" ضرورة عدم التعلق المفرط بالرموز الظاهرة، بل إرجاعها للتأويل الكلي الذي يجمع بين حال الرائي والضوابط الشرعية الموثقة.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {modalSubTab === 'seo' && (
-                <div className="space-y-5">
-                  <div className="bg-slate-950 border border-emerald-900 p-5 rounded-2xl space-y-4">
-                    <div className="flex items-center justify-between border-b border-emerald-900/60 pb-3">
-                      <span className="font-bold text-amber-300 text-xs font-mono">
-                        SEO Metadata & AI Generative Engine Optimization
-                      </span>
-                      <span className="text-[10px] text-emerald-400 bg-emerald-950 border border-emerald-800 px-2.5 py-1 rounded-lg font-mono font-bold">
-                        SEO Score: 100/100
-                      </span>
-                    </div>
-
-                    <div className="space-y-3 text-xs font-mono">
-                      <div>
-                        <span className="text-slate-400">SEO Title:</span>{' '}
-                        <span className="text-slate-100 font-serif">{selectedArticle.seo?.seoTitle || selectedArticle.title}</span>
-                      </div>
-
-                      <div>
-                        <span className="text-slate-400">Meta Description:</span>{' '}
-                        <span className="text-slate-300 font-serif">{selectedArticle.seo?.metaDescription || selectedArticle.excerpt}</span>
-                      </div>
-
-                      <div>
-                        <span className="text-slate-400">Primary Keyword:</span>{' '}
-                        <span className="text-amber-400 font-bold">{selectedArticle.seo?.primaryKeyword || selectedArticle.title}</span>
-                      </div>
-
-                      <div>
-                        <span className="text-slate-400">Target Keywords & Search Tags:</span>{' '}
-                        <div className="flex flex-wrap gap-1.5 mt-1.5 font-serif">
-                          {selectedArticle.tags.map((t) => (
-                            <span key={t} className="bg-slate-900 text-emerald-300 text-[11px] px-2.5 py-1 rounded-lg border border-emerald-800">
-                              {t}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Schema JSON-LD Generator View */}
-                  <div className="bg-slate-950 border border-emerald-900 p-5 rounded-2xl space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-emerald-300 text-xs font-mono flex items-center gap-2">
-                        <Code className="w-4 h-4 text-amber-400" />
-                        JSON-LD Structured Data Schema (Google & AI Indexing)
-                      </span>
-
-                      <button
-                        onClick={() => handleCopySchema(selectedArticle)}
-                        className="bg-emerald-900 hover:bg-emerald-800 text-emerald-200 text-xs px-3.5 py-1.5 rounded-xl font-mono flex items-center gap-1.5 transition cursor-pointer"
-                      >
-                        {copiedSchema ? <Check className="w-4 h-4 text-amber-400" /> : <Copy className="w-4 h-4" />}
-                        <span>{copiedSchema ? 'تم النسخ!' : 'نسخ كود الـ Schema'}</span>
-                      </button>
-                    </div>
-
-                    <pre className="bg-slate-900 border border-emerald-900/60 p-4 rounded-xl text-[11px] font-mono text-emerald-400 overflow-x-auto dir-ltr text-left max-h-56">
-                      {getArticleSchema(selectedArticle)}
-                    </pre>
-                  </div>
-                </div>
-              )}
-
-            </div>
-
-            {/* Modal Footer CTA */}
-            <div className="pt-4 border-t border-emerald-900/60 flex flex-col sm:flex-row items-center justify-between gap-4 shrink-0">
-              <div className="text-xs sm:text-sm text-slate-300 font-serif">
-                هل تريد تفسيراً حياً لرؤياك من أحمد الشريف؟
-              </div>
-
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setSelectedArticle(null)}
-                  className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 text-xs sm:text-sm px-5 py-2.5 rounded-2xl font-bold font-serif cursor-pointer transition shadow-md"
-                >
-                  فسر حلمك الآن بالذكاء الاصطناعي
-                </button>
-              </div>
-            </div>
-
-          </div>
-        </div>
+        <ArticleDetailModal
+          article={selectedArticle}
+          onClose={() => setSelectedArticle(null)}
+          onSelectArticle={(art) => setSelectedArticle(art)}
+          onOpenAiInterpreter={() => {
+            if (onNavigateToTab) onNavigateToTab('home');
+          }}
+          onOpenPrivateConsultation={() => {
+            if (onNavigateToTab) onNavigateToTab('services');
+          }}
+          onOpenVipInfo={() => {
+            if (onNavigateToTab) onNavigateToTab('vip');
+          }}
+          isAdmin={isAdmin}
+        />
       )}
 
     </div>

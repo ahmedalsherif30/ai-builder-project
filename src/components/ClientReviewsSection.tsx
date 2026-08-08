@@ -1,12 +1,13 @@
-import React, { useState, useMemo } from 'react';
-import { Star, CheckCircle2, Quote, Sparkles, Heart, Globe, ShieldCheck, Search, Filter, PlusCircle, X, Send, ThumbsUp, MessageSquare } from 'lucide-react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { Star, CheckCircle2, Quote, Sparkles, Heart, Globe, ShieldCheck, Search, Filter, PlusCircle, X, Send, ThumbsUp, MessageSquare, Layers, ChevronLeft, ChevronRight } from 'lucide-react';
+import { GlobeReviewsSphere } from './GlobeReviewsSphere';
 
 export interface TestimonialReview {
   id: string;
   name: string;
   handle: string;
   country: string;
-  countryCode: 'sa' | 'iq' | 'eg' | 'kw' | 'ae' | 'jo' | 'ps' | 'dz' | 'bh' | 'om' | 'qa';
+  countryCode: 'sa' | 'iq' | 'eg' | 'kw' | 'ae' | 'jo' | 'ps' | 'dz' | 'bh' | 'om' | 'qa' | 'ma' | 'sd' | 'tn';
   flag: string;
   rating: number;
   text: string;
@@ -17,6 +18,18 @@ export interface TestimonialReview {
 }
 
 export const REVIEWS_DATA: TestimonialReview[] = [
+  {
+    id: 'rev-5',
+    name: 'أم ليلى (Lola)',
+    handle: '@lola_lyly2',
+    country: 'الكويت',
+    countryCode: 'kw',
+    flag: '🇰🇼',
+    rating: 5,
+    text: 'احسن مفسر ماشاء الله ربي يوفقك يا استاذ احمد ويكثر من امثالك صادق جدا بتفسيرك',
+    tag: 'تفسير دقيق وشامل',
+    date: '2026-02-10'
+  },
   {
     id: 'rev-1',
     name: 'يقيني بالله (mira)',
@@ -66,18 +79,6 @@ export const REVIEWS_DATA: TestimonialReview[] = [
     tag: 'دقة وتفوق علمي',
     isFulfilled: true,
     date: '2026-01-04'
-  },
-  {
-    id: 'rev-5',
-    name: 'أم ليلى (Lola)',
-    handle: '@lola_lyly2',
-    country: 'الكويت',
-    countryCode: 'kw',
-    flag: '🇰🇼',
-    rating: 5,
-    text: 'احسن مفسر ماشاء الله ربي يوفقك يا استاذ احمد ويكثر من امثالك صادق جدا بتفسيرك',
-    tag: 'تفسير دقيق وشامل',
-    date: '2026-02-10'
   },
   {
     id: 'rev-6',
@@ -378,6 +379,82 @@ export const REVIEWS_DATA: TestimonialReview[] = [
     tag: 'تحقق كامل 👍',
     isFulfilled: true,
     date: '2026-01-21'
+  },
+  {
+    id: 'rev-30',
+    name: 'الدكتور خالد العتيبي',
+    handle: '@dr_khalid_otb',
+    country: 'السعودية',
+    countryCode: 'sa',
+    flag: '🇸🇦',
+    rating: 5,
+    text: 'تفسير أحمد الشريف لرؤياي المكررة فتح لي أبواب الفهم والاطمئنان الروحي. طريقته المبنية على القرآن الكريم وكتابه لعام 2026 فريدة جداً.',
+    tag: 'تفسير صوتي خاص',
+    isFulfilled: true,
+    date: '2026-03-10'
+  },
+  {
+    id: 'rev-31',
+    name: 'مريم الزهراني',
+    handle: '@mmaryam_z',
+    country: 'الإمارات',
+    countryCode: 'ae',
+    flag: '🇦🇪',
+    rating: 5,
+    text: 'ميزة "ملف الرؤى الشخصي" في الموقع جعلتني أتابع كل حلم وتأويله والحمد لله رأيت تحقق الرؤيا بالخير تماماً كما فسرها الذكاء الاصطناعي وأحمد الشريف.',
+    tag: 'تفسير كتابي + ملف الرؤى',
+    isFulfilled: true,
+    date: '2026-02-28'
+  },
+  {
+    id: 'rev-32',
+    name: 'أحمد البكري',
+    handle: '@ahmed_bakri',
+    country: 'مصر',
+    countryCode: 'eg',
+    flag: '🇪🇬',
+    rating: 5,
+    text: 'كتاب تأويلات روحية 2026 لـ أحمد الشريف مرجع لا غنى عنه في كل بيت مسلم. تم الدفع بسهولة عبر فودافون كاش على رقم الواتساب المباشر.',
+    tag: 'شراء الكتاب والاشتراك',
+    date: '2026-01-18'
+  },
+  {
+    id: 'rev-33',
+    name: 'فاطمة الفاسي',
+    handle: '@fatima_fassi',
+    country: 'المغرب',
+    countryCode: 'ma',
+    flag: '🇲🇦',
+    rating: 5,
+    text: 'تفسير القرآن والرموز المنامية من الدكتور أحمد الشريف غير مجرى حياتي إيجابياً والحمد لله رأيت البشائر تتحقق بالكامل.',
+    tag: 'تفسير قرآني مبارك',
+    isFulfilled: true,
+    date: '2026-02-12'
+  },
+  {
+    id: 'rev-34',
+    name: 'عبد الرحمن السوداني',
+    handle: '@abdo_sd',
+    country: 'السودان',
+    countryCode: 'sd',
+    flag: '🇸🇩',
+    rating: 5,
+    text: 'ما شاء الله تبارك الله، بصيرتك نافذة وتفسيرك بالقرآن الكريم يطمئن القلوب وينير الدرب.',
+    tag: 'بصيرة وطمأنينة',
+    date: '2026-03-02'
+  },
+  {
+    id: 'rev-35',
+    name: 'منيرة التونسية',
+    handle: '@mounira_tn',
+    country: 'تونس',
+    countryCode: 'tn',
+    flag: '🇹🇳',
+    rating: 5,
+    text: 'من أفضل الخدمات والمنصات، الاستجابة سريعة جداً والتفسير دقيق للغاية ومليء بالبشائر والرحمة.',
+    tag: 'دقة واستجابة سريعة',
+    isFulfilled: true,
+    date: '2026-02-22'
   }
 ];
 
@@ -390,6 +467,8 @@ export const ClientReviewsSection: React.FC<ClientReviewsSectionProps> = React.m
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedReview, setSelectedReview] = useState<TestimonialReview | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const REVIEWS_PER_PAGE = 6;
   
   // Add Review Form Modal State
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
@@ -475,6 +554,26 @@ export const ClientReviewsSection: React.FC<ClientReviewsSectionProps> = React.m
     }, 2000);
   };
 
+  // Extract unique countries with flags and counts dynamically
+  const countryFilters = useMemo(() => {
+    const map = new Map<string, { country: string; flag: string; count: number }>();
+    reviewsList.forEach(rev => {
+      if (rev.country) {
+        const existing = map.get(rev.country);
+        if (existing) {
+          existing.count += 1;
+        } else {
+          map.set(rev.country, {
+            country: rev.country,
+            flag: rev.flag || '🏳️',
+            count: 1,
+          });
+        }
+      }
+    });
+    return Array.from(map.values());
+  }, [reviewsList]);
+
   // Filter Logic
   const filteredReviews = useMemo(() => {
     return reviewsList.filter(rev => {
@@ -490,6 +589,8 @@ export const ClientReviewsSection: React.FC<ClientReviewsSectionProps> = React.m
         matchesFilter = rev.country === 'العراق';
       } else if (activeFilter === 'others') {
         matchesFilter = !['السعودية', 'مصر', 'العراق'].includes(rev.country);
+      } else if (activeFilter !== 'all') {
+        matchesFilter = rev.country === activeFilter;
       }
 
       // Search query
@@ -506,267 +607,321 @@ export const ClientReviewsSection: React.FC<ClientReviewsSectionProps> = React.m
     });
   }, [reviewsList, activeFilter, searchQuery]);
 
+  // Reset page to 1 when filters or search change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeFilter, searchQuery]);
+
+  // Pagination calculation for section 3
+  const totalPages = Math.ceil(filteredReviews.length / REVIEWS_PER_PAGE) || 1;
+  const paginatedReviews = useMemo(() => {
+    const start = (currentPage - 1) * REVIEWS_PER_PAGE;
+    return filteredReviews.slice(start, start + REVIEWS_PER_PAGE);
+  }, [filteredReviews, currentPage]);
+
+  // Ref for horizontal smooth scroll
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -320, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 320, behavior: 'smooth' });
+    }
+  };
+
   // Statistics counters
   const totalCount = reviewsList.length;
   const fulfilledCount = reviewsList.filter(r => r.isFulfilled).length;
 
   return (
-    <section className="mt-10 py-10 px-4 sm:px-8 bg-gradient-to-b from-slate-950 via-emerald-950/30 to-slate-950 border border-amber-500/30 rounded-3xl shadow-2xl relative overflow-hidden font-serif" dir="rtl">
-      {/* Visual Ambient Glows */}
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
+    <section className="mt-6 py-5 px-3 sm:px-6 bg-slate-950/90 border border-amber-500/30 rounded-2xl shadow-xl relative overflow-hidden font-serif" dir="rtl">
+      {/* Visual Ambient Subtle Glow */}
+      <div className="absolute top-0 right-1/4 w-72 h-72 bg-amber-500/5 rounded-full blur-2xl pointer-events-none" />
 
-      {/* Header Banner */}
-      <div className="text-center max-w-4xl mx-auto space-y-4 relative z-10">
-        <div className="inline-flex items-center gap-2 bg-slate-900/90 border border-amber-500/40 px-5 py-2 rounded-full text-xs sm:text-sm text-amber-300 shadow-xl">
-          <div className="flex items-center gap-1">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-            ))}
-          </div>
-          <span className="font-extrabold text-amber-300">5.0 / 5.0</span>
-          <span className="text-amber-500/50">•</span>
-          <span className="text-slate-200 font-medium">موسوعة التقييمات الشاملة (جميع الآراء الموثقة)</span>
-        </div>
-
-        <h2 className="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100 font-serif tracking-wide leading-tight">
-          سجل آراء وتقييمات المستفيدين والمشاهدين
-        </h2>
-
-        {/* Live Key Metrics Bar */}
-        <div className="pt-2 flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-xs sm:text-sm font-sans text-slate-300">
-          <div className="flex items-center gap-2 bg-slate-900/90 px-4 py-2 rounded-2xl border border-amber-500/40 shadow-md">
-            <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span className="font-bold text-slate-100">إجمالي الآراء المعروضة:</span>
-            <span className="bg-amber-500 text-slate-950 font-black px-2.5 py-0.5 rounded-full text-xs">{totalCount} تقييم</span>
-          </div>
-
-          <div className="flex items-center gap-2 bg-slate-900/90 px-4 py-2 rounded-2xl border border-emerald-800/80 shadow-md">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span className="font-bold text-slate-100">رؤى محققة بالواقع:</span>
-            <span className="bg-emerald-500 text-slate-950 font-black px-2.5 py-0.5 rounded-full text-xs">{fulfilledCount} رؤيا</span>
-          </div>
-
-          <div className="flex items-center gap-2 bg-slate-900/90 px-4 py-2 rounded-2xl border border-amber-500/40 shadow-md">
-            <Globe className="w-4 h-4 text-teal-400 shrink-0" />
-            <span className="font-bold text-slate-100">تغطية الدول:</span>
-            <span className="text-teal-300 font-bold">11 دولة عربية</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Interactive Controls Bar: Category Filters + Search + Add Review Trigger */}
-      <div className="mt-8 relative z-10 max-w-6xl mx-auto space-y-4">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-slate-900/95 border border-emerald-900/80 p-3 sm:p-4 rounded-3xl shadow-2xl backdrop-blur-md">
-          
-          {/* Category Filter Pills */}
-          <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
-            <button
-              onClick={() => setActiveFilter('all')}
-              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold font-serif whitespace-nowrap transition cursor-pointer flex items-center gap-1.5 ${
-                activeFilter === 'all'
-                  ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20 font-black'
-                  : 'bg-slate-950 text-slate-300 hover:bg-slate-800 border border-slate-800'
-              }`}
-            >
-              <Filter className="w-3.5 h-3.5" />
-              <span>عرض جميع الآراء ({totalCount})</span>
-            </button>
-
-            <button
-              onClick={() => setActiveFilter('fulfilled')}
-              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold font-serif whitespace-nowrap transition cursor-pointer flex items-center gap-1.5 ${
-                activeFilter === 'fulfilled'
-                  ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20 font-black'
-                  : 'bg-slate-950 text-emerald-300 hover:bg-slate-800 border border-emerald-900/60'
-              }`}
-            >
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>تعبير محقق بالواقع ({fulfilledCount})</span>
-            </button>
-
-            <button
-              onClick={() => setActiveFilter('saudi')}
-              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold font-serif whitespace-nowrap transition cursor-pointer ${
-                activeFilter === 'saudi'
-                  ? 'bg-amber-500 text-slate-950 font-black'
-                  : 'bg-slate-950 text-slate-300 hover:bg-slate-800 border border-slate-800'
-              }`}
-            >
-              <span>🇸🇦 السعودية</span>
-            </button>
-
-            <button
-              onClick={() => setActiveFilter('egypt')}
-              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold font-serif whitespace-nowrap transition cursor-pointer ${
-                activeFilter === 'egypt'
-                  ? 'bg-amber-500 text-slate-950 font-black'
-                  : 'bg-slate-950 text-slate-300 hover:bg-slate-800 border border-slate-800'
-              }`}
-            >
-              <span>🇪🇬 مصر</span>
-            </button>
-
-            <button
-              onClick={() => setActiveFilter('iraq')}
-              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold font-serif whitespace-nowrap transition cursor-pointer ${
-                activeFilter === 'iraq'
-                  ? 'bg-amber-500 text-slate-950 font-black'
-                  : 'bg-slate-950 text-slate-300 hover:bg-slate-800 border border-slate-800'
-              }`}
-            >
-              <span>🇮🇶 العراق</span>
-            </button>
-
-            <button
-              onClick={() => setActiveFilter('others')}
-              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold font-serif whitespace-nowrap transition cursor-pointer ${
-                activeFilter === 'others'
-                  ? 'bg-amber-500 text-slate-950 font-black'
-                  : 'bg-slate-950 text-slate-300 hover:bg-slate-800 border border-slate-800'
-              }`}
-            >
-              <span>🌐 باقي الدول العربية</span>
-            </button>
-          </div>
-
-          {/* Search Box & Add Review Button */}
-          <div className="flex items-center gap-2 w-full md:w-auto shrink-0">
-            <div className="relative flex-1 md:w-60">
-              <Search className="w-4 h-4 text-slate-400 absolute right-3 top-3 pointer-events-none" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="بحث في أسماء أو نصوص الآراء..."
-                className="w-full bg-slate-950 text-slate-100 text-xs pr-9 pl-3 py-2.5 rounded-xl border border-slate-800 focus:border-amber-400 focus:outline-none transition font-sans placeholder-slate-500"
-              />
-              {searchQuery && (
-                <button onClick={() => setSearchQuery('')} className="absolute left-2.5 top-2.5 text-slate-500 hover:text-slate-300">
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
+      {/* Header Bar with Title & Rating Badge */}
+      <div className="flex items-center justify-between gap-3 pb-3 border-b border-emerald-900/40 relative z-10">
+        
+        {/* Right side: Title & Badges */}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-xl text-xs font-bold text-amber-300">
+            <div className="flex items-center gap-0.5">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
+              ))}
             </div>
-
-            <button
-              onClick={() => setIsAddModalOpen(true)}
-              className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-slate-950 font-extrabold px-4 py-2.5 rounded-xl text-xs sm:text-sm transition cursor-pointer shadow-lg flex items-center gap-1.5 shrink-0 whitespace-nowrap"
-            >
-              <PlusCircle className="w-4 h-4" />
-              <span>أضف رأيك وتقييمك</span>
-            </button>
+            <span>5.0</span>
           </div>
+
+          <h2 className="text-base sm:text-lg font-black text-amber-200 font-serif flex items-center gap-2">
+            <span>آراء وتقييمات المستفيدين والمشاهدين</span>
+          </h2>
         </div>
       </div>
 
-      {/* Results Count Banner */}
-      <div className="mt-4 text-center text-xs text-amber-300/80 font-serif">
-        يتم عرض <span className="font-bold text-amber-300">{filteredReviews.length}</span> تقييماً ورأياً موثقاً من أصل {totalCount}
+      {/* Filter Tabs Row (Compact Single Row) */}
+      <div className="pt-3 pb-2 flex items-center gap-1.5 overflow-x-auto scrollbar-none text-[11px] sm:text-xs font-serif z-10 relative">
+        <button
+          onClick={() => setActiveFilter('all')}
+          className={`px-2.5 py-1 rounded-xl whitespace-nowrap font-bold transition cursor-pointer shrink-0 ${
+            activeFilter === 'all'
+              ? 'bg-amber-500/20 text-amber-300 border border-amber-500/60 shadow-sm'
+              : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+          }`}
+        >
+          الكل ({reviewsList.length})
+        </button>
+
+        <button
+          onClick={() => setActiveFilter('fulfilled')}
+          className={`px-2.5 py-1 rounded-xl whitespace-nowrap font-bold transition cursor-pointer flex items-center gap-1 shrink-0 ${
+            activeFilter === 'fulfilled'
+              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/60 shadow-sm'
+              : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+          }`}
+        >
+          <Sparkles className="w-3 h-3 text-emerald-400" />
+          <span>تعبير محقق ({fulfilledCount})</span>
+        </button>
+
+        {countryFilters.map(({ country, flag }) => {
+          const isActive = activeFilter === country || 
+            (activeFilter === 'saudi' && country === 'السعودية') ||
+            (activeFilter === 'egypt' && country === 'مصر') ||
+            (activeFilter === 'iraq' && country === 'العراق');
+
+          return (
+            <button
+              key={country}
+              onClick={() => setActiveFilter(country)}
+              className={`px-2.5 py-1 rounded-xl whitespace-nowrap font-bold transition cursor-pointer flex items-center gap-1 shrink-0 ${
+                isActive
+                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/60 shadow-sm'
+                  : 'bg-slate-900 text-slate-300 hover:text-amber-200 border border-slate-800'
+              }`}
+            >
+              <span>{flag}</span>
+              <span>{country}</span>
+            </button>
+          );
+        })}
+
+        {/* Compact Quick Search */}
+        <div className="mr-auto relative min-w-[140px] shrink-0">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="بحث..."
+            className="w-full bg-slate-900 text-slate-200 border border-slate-800 rounded-xl px-2.5 py-1 text-xs focus:outline-none focus:border-amber-500/50"
+          />
+        </div>
       </div>
 
-      {/* Visual Reviews Grid Showcase - Rendering ALL Filtered Cards */}
-      {filteredReviews.length > 0 ? (
-        <div className="mt-6 relative z-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5 max-w-full mx-auto">
-          {filteredReviews.map((rev) => {
+      {/* SINGLE ROW HORIZONTAL CAROUSEL SLIDER */}
+      <div
+        ref={scrollContainerRef}
+        className="flex flex-nowrap overflow-x-auto scrollbar-none gap-3 py-3 px-0.5 w-full scroll-smooth relative z-10"
+      >
+        {filteredReviews.length === 0 ? (
+          <div className="w-full py-8 text-center text-slate-400 text-xs font-serif bg-slate-900/50 rounded-xl border border-slate-800">
+            لا توجد آراء مطابقة لمعايير البحث الحالية.
+          </div>
+        ) : (
+          filteredReviews.map((rev) => {
             const isLiked = !!likedMap[rev.id];
             return (
               <div
-                key={rev.id}
+                key={`single-row-${rev.id}`}
                 onClick={() => setSelectedReview(rev)}
-                className="bg-slate-900/90 hover:bg-slate-900 border border-emerald-800/60 hover:border-amber-400/90 p-3.5 rounded-2xl transition duration-300 flex flex-col justify-between group hover:-translate-y-1 shadow-xl hover:shadow-amber-950/30 relative cursor-pointer"
+                className="w-[280px] sm:w-[320px] md:w-[340px] shrink-0 bg-slate-900/90 hover:bg-slate-900 border border-amber-500/30 hover:border-amber-400 p-3.5 rounded-xl transition duration-200 cursor-pointer flex flex-col justify-between space-y-2.5 shadow-md hover:shadow-amber-500/10 group relative"
               >
-                {/* Top Badge Accent */}
-                {rev.isFulfilled && (
-                  <span className="absolute -top-3 left-4 bg-emerald-500 text-slate-950 text-[10px] px-2.5 py-0.5 rounded-full font-serif font-black shadow-md flex items-center gap-1">
-                    <Sparkles className="w-3 h-3 text-slate-950" />
-                    <span>تعبير محقق بالواقع 100%</span>
-                  </span>
-                )}
-
-                <div className="space-y-3 pt-1">
-                  {/* Top Header: Avatar & Handle & Quote */}
-                  <div className="flex items-start justify-between gap-2 border-b border-emerald-900/40 pb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-500/30 via-emerald-900/80 to-slate-950 border border-amber-400/50 flex items-center justify-center font-black text-amber-300 text-base shrink-0 shadow-md group-hover:scale-105 transition">
+                {/* Top User Info & Stars */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-2 border-b border-emerald-900/40 pb-2">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-500/30 via-emerald-950 to-slate-900 border border-amber-400/50 flex items-center justify-center font-black text-amber-300 text-xs shrink-0 shadow-sm">
                         {rev.name.charAt(0)}
                       </div>
-                      <div>
-                        <h3 className="font-extrabold text-slate-100 text-sm font-serif group-hover:text-amber-300 transition flex items-center gap-1.5">
-                          <span>{rev.name}</span>
+                      <div className="min-w-0">
+                        <h3 className="font-bold text-slate-100 text-xs font-serif group-hover:text-amber-300 transition truncate flex items-center gap-1">
+                          <span className="truncate">{rev.name}</span>
                           {rev.isFulfilled && (
-                            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" title="تعبير محقق بالواقع" />
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" title="تعبير محقق بالواقع" />
                           )}
                         </h3>
-                        <div className="flex items-center gap-1.5 text-[11px] text-slate-400 font-sans mt-0.5">
-                          <span className="flex items-center gap-1 text-amber-300 font-bold bg-amber-500/10 px-1.5 py-0.5 rounded-md border border-amber-500/20">
-                            <span>{rev.flag}</span>
-                            <span>{rev.country}</span>
-                          </span>
-                          <span className="text-slate-500">•</span>
-                          <span className="text-slate-400 font-mono text-[10px]">{rev.handle}</span>
+                        <div className="flex items-center gap-1 text-[10px] text-slate-400 font-sans">
+                          <span>{rev.flag}</span>
+                          <span className="truncate">{rev.country}</span>
+                          <span className="text-slate-600">•</span>
+                          <span className="text-slate-500 font-mono text-[9px] truncate">{rev.handle}</span>
                         </div>
                       </div>
                     </div>
 
-                    <Quote className="w-6 h-6 text-amber-400/20 group-hover:text-amber-400/80 transition shrink-0" />
-                  </div>
-
-                  {/* Rating & Tag Strip */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-0.5">
-                      {[...Array(rev.rating)].map((_, i) => (
-                        <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    {/* Rating Stars */}
+                    <div className="flex items-center gap-0.5 shrink-0 bg-amber-500/10 px-1.5 py-0.5 rounded-md border border-amber-500/20">
+                      {[...Array(rev.rating || 5)].map((_, i) => (
+                        <Star key={i} className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
                       ))}
                     </div>
-                    <span className="text-[10px] bg-slate-950 border border-amber-500/30 text-amber-300 px-2.5 py-0.5 rounded-full font-serif font-bold">
-                      {rev.tag}
-                    </span>
                   </div>
 
-                  {/* Body Text */}
-                  <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-serif font-normal pt-1 line-clamp-4">
+                  {/* Fulfilled or Category Tag */}
+                  <div className="flex items-center justify-between text-[10px]">
+                    {rev.isFulfilled ? (
+                      <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-md font-bold flex items-center gap-1">
+                        <Sparkles className="w-2.5 h-2.5 text-emerald-400" />
+                        <span>تعبير محقق بالواقع 100%</span>
+                      </span>
+                    ) : (
+                      <span className="bg-amber-500/10 text-amber-300 border border-amber-500/20 px-2 py-0.5 rounded-md font-semibold">
+                        {rev.tag}
+                      </span>
+                    )}
+                    {rev.date && <span className="text-slate-500 font-mono text-[9px]">{rev.date}</span>}
+                  </div>
+
+                  {/* Review Quote text (2 lines clamped) */}
+                  <p className="text-xs text-slate-200 font-serif leading-relaxed line-clamp-2 pt-0.5">
                     "{rev.text}"
                   </p>
                 </div>
 
-                {/* Footer Interaction Bar */}
-                <div className="mt-5 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400 font-sans">
-                  <div className="flex items-center gap-1 text-emerald-400 font-bold">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>تقييم موثق 5/5</span>
-                  </div>
+                {/* Footer Bar */}
+                <div className="flex items-center justify-between text-[11px] pt-1 border-t border-slate-800/80">
+                  <button
+                    onClick={(e) => toggleLike(rev.id, e)}
+                    className={`flex items-center gap-1 transition ${
+                      isLiked ? 'text-rose-400 font-bold' : 'text-slate-400 hover:text-rose-300'
+                    }`}
+                  >
+                    <Heart className={`w-3 h-3 ${isLiked ? 'fill-rose-500 text-rose-500' : ''}`} />
+                    <span>{rev.likesCount || 15}</span>
+                  </button>
 
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={(e) => toggleLike(rev.id, e)}
-                      className={`flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-bold transition ${
-                        isLiked ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50' : 'hover:bg-slate-800 text-slate-400'
-                      }`}
-                      title="إعجاب بالشهادة"
-                    >
-                      <ThumbsUp className={`w-3.5 h-3.5 ${isLiked ? 'text-amber-400 fill-amber-400' : ''}`} />
-                      <span>{rev.likesCount || 15}</span>
-                    </button>
-                    <span className="text-slate-500">{rev.date || '٢٠٢٦'}</span>
-                  </div>
+                  <span className="text-amber-400/90 font-bold text-[10px] group-hover:underline flex items-center gap-0.5">
+                    <span>قراءة المراجعة بالكامل</span>
+                    <ChevronLeft className="w-3 h-3" />
+                  </span>
                 </div>
               </div>
             );
-          })}
-        </div>
-      ) : (
-        <div className="mt-10 p-12 text-center bg-slate-900/80 border border-slate-800 rounded-3xl max-w-xl mx-auto space-y-3">
-          <MessageSquare className="w-10 h-10 text-amber-400 mx-auto" />
-          <h3 className="text-lg font-bold text-amber-200">لم يتم العثور على نتائج للبحث</h3>
-          <p className="text-xs text-slate-400">يرجى تغيير كلمة البحث أو إعادة ضبط الفلاتر لاستعراض باقي التقييمات.</p>
-          <button
-            onClick={() => { setActiveFilter('all'); setSearchQuery(''); }}
-            className="mt-2 bg-amber-500 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs"
-          >
-            إعادة عرض كل الآراء
-          </button>
+          })
+        )}
+      </div>
+
+      {/* Interactive Navigation Controls Bar under Reviews */}
+      <div className="my-3 flex items-center justify-between sm:justify-center gap-3 relative z-10 py-2.5 px-3 bg-slate-900/60 border border-slate-800/80 rounded-xl">
+        <button
+          onClick={scrollRight}
+          className="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/40 hover:border-amber-400 transition cursor-pointer flex items-center gap-2 font-bold text-xs shadow-md active:scale-95 shrink-0"
+          title="التمرير لليمين (السابق)"
+          aria-label="السابق"
+        >
+          <ChevronRight className="w-4 h-4 text-amber-400" />
+          <span>السابق</span>
+        </button>
+
+        <span className="text-[11px] text-slate-300 font-sans font-medium text-center">
+          ◄ اسحب للتنقل بين آراء وتقييمات المستفيدين والمشاهدين ►
+        </span>
+
+        <button
+          onClick={scrollLeft}
+          className="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/40 hover:border-amber-400 transition cursor-pointer flex items-center gap-2 font-bold text-xs shadow-md active:scale-95 shrink-0"
+          title="التمرير لليسار (التالي)"
+          aria-label="التالي"
+        >
+          <span>التالي</span>
+          <ChevronLeft className="w-4 h-4 text-amber-400" />
+        </button>
+      </div>
+
+      {/* Detail Review Modal */}
+      {selectedReview && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 font-serif">
+          <div className="bg-slate-900 border-2 border-amber-500/60 rounded-3xl p-6 max-w-lg w-full shadow-2xl relative text-slate-100 space-y-4">
+            <button
+              onClick={() => setSelectedReview(null)}
+              className="absolute top-4 left-4 text-slate-400 hover:text-amber-300 p-1.5 rounded-xl hover:bg-slate-800 transition cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-3 border-b border-emerald-900/60 pb-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500/30 to-emerald-950 border border-amber-400/50 flex items-center justify-center font-black text-amber-300 text-lg">
+                {selectedReview.name.charAt(0)}
+              </div>
+              <div>
+                <h3 className="font-extrabold text-slate-100 text-base flex items-center gap-1.5">
+                  <span>{selectedReview.name}</span>
+                  {selectedReview.isFulfilled && (
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" title="تعبير محقق بالواقع" />
+                  )}
+                </h3>
+                <div className="flex items-center gap-2 text-xs text-slate-400 font-sans mt-0.5">
+                  <span className="text-amber-300 font-bold bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
+                    {selectedReview.flag} {selectedReview.country}
+                  </span>
+                  <span>{selectedReview.handle}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1">
+                  {[...Array(selectedReview.rating || 5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                  ))}
+                </div>
+                {selectedReview.isFulfilled && (
+                  <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 px-3 py-1 rounded-full text-xs font-bold">
+                    ✨ رؤيا محققة بالواقع 100%
+                  </span>
+                )}
+              </div>
+
+              <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-sm leading-relaxed text-slate-200">
+                "{selectedReview.text}"
+              </div>
+
+              <div className="flex items-center justify-between text-xs text-slate-400 font-sans">
+                <span className="bg-amber-500/10 text-amber-300 px-2.5 py-1 rounded-lg border border-amber-500/20">
+                  وسم: {selectedReview.tag}
+                </span>
+                <span>تاريخ: {selectedReview.date || '2026'}</span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setSelectedReview(null)}
+              className="w-full bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold py-2.5 rounded-xl text-xs transition cursor-pointer"
+            >
+              إغلاق
+            </button>
+          </div>
         </div>
       )}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       {/* Bottom CTA Actions */}
       <div className="mt-10 text-center relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -789,68 +944,7 @@ export const ClientReviewsSection: React.FC<ClientReviewsSectionProps> = React.m
         </button>
       </div>
 
-      {/* Detail Modal for Selected Review */}
-      {selectedReview && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 font-serif">
-          <div className="bg-slate-900 border-2 border-amber-500/70 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative text-slate-100 space-y-5 animate-in fade-in zoom-in duration-200">
-            <button
-              onClick={() => setSelectedReview(null)}
-              className="absolute top-4 left-4 text-slate-400 hover:text-amber-300 p-1.5 rounded-xl hover:bg-slate-800 transition cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
 
-            <div className="flex items-center gap-3 border-b border-emerald-900/60 pb-4">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500/30 to-emerald-900/80 border border-amber-400/50 flex items-center justify-center font-black text-amber-300 text-lg">
-                {selectedReview.name.charAt(0)}
-              </div>
-              <div>
-                <h3 className="font-extrabold text-amber-200 text-base sm:text-lg flex items-center gap-2">
-                  <span>{selectedReview.name}</span>
-                  {selectedReview.isFulfilled && (
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                  )}
-                </h3>
-                <div className="flex items-center gap-2 text-xs text-slate-400 mt-1 font-sans">
-                  <span className="text-amber-300 font-bold">{selectedReview.flag} {selectedReview.country}</span>
-                  <span>•</span>
-                  <span>{selectedReview.handle}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between bg-slate-950 p-3 rounded-xl border border-slate-800">
-              <div className="flex items-center gap-1">
-                {[...Array(selectedReview.rating)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                ))}
-              </div>
-              <span className="bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs px-3 py-1 rounded-full font-bold">
-                {selectedReview.tag}
-              </span>
-            </div>
-
-            <div className="bg-slate-950/80 p-5 rounded-2xl border border-emerald-900/60 leading-relaxed text-slate-100 text-sm sm:text-base font-serif">
-              "{selectedReview.text}"
-            </div>
-
-            <div className="flex items-center justify-between text-xs text-slate-400 font-sans border-t border-slate-800 pt-3">
-              <span className="text-emerald-400 font-bold flex items-center gap-1">
-                <ShieldCheck className="w-4 h-4" />
-                <span>شهادة موثقة في منصة تفسير الأحلام</span>
-              </span>
-              <span>تاريخ: {selectedReview.date}</span>
-            </div>
-
-            <button
-              onClick={() => setSelectedReview(null)}
-              className="w-full bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold py-2.5 rounded-xl text-xs transition cursor-pointer"
-            >
-              إغلاق
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Add Review Form Modal */}
       {isAddModalOpen && (

@@ -17,6 +17,7 @@ interface HeaderProps {
   onOpenAuth?: () => void;
   onOpenClientDashboard?: () => void;
   onOpenShareRewards?: () => void;
+  onOpenNewsletterDigest?: () => void;
 }
 
 const NAV_ITEMS = [
@@ -40,6 +41,7 @@ export const Header: React.FC<HeaderProps> = React.memo(({
   onOpenAuth,
   onOpenClientDashboard,
   onOpenShareRewards,
+  onOpenNewsletterDigest,
 }) => {
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
 
@@ -153,8 +155,8 @@ export const Header: React.FC<HeaderProps> = React.memo(({
         </div>
 
         {/* Horizontal Navigation Strip with Balanced, Parallel Single-Row Buttons */}
-        <nav className="border-t border-emerald-900/40 py-2 w-full overflow-x-auto scrollbar-none">
-          <div className="flex flex-nowrap items-center justify-start lg:justify-between gap-1.5 sm:gap-2 py-0.5 min-w-max w-full">
+        <nav className="border-t border-emerald-900/40 py-2 w-full overflow-x-auto lg:overflow-x-visible scrollbar-none">
+          <div className="flex flex-nowrap items-center justify-between gap-1 sm:gap-1.5 lg:gap-1.5 xl:gap-2 py-0.5 min-w-max lg:min-w-0 w-full">
             {NAV_ITEMS.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -165,7 +167,7 @@ export const Header: React.FC<HeaderProps> = React.memo(({
                   onClick={() => handleNavClick(item.id)}
                   title={item.label}
                   aria-label={item.label}
-                  className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs sm:text-xs md:text-sm font-bold font-serif transition-all duration-300 cursor-pointer whitespace-nowrap border group shadow-sm shrink-0 justify-center ${
+                  className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 lg:px-2 xl:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs md:text-xs lg:text-[12px] xl:text-sm font-bold font-serif transition-all duration-300 cursor-pointer whitespace-nowrap border group shadow-sm shrink-0 justify-center ${
                     isActive
                       ? 'bg-amber-500/20 text-amber-300 border-amber-500/60 shadow-lg shadow-amber-500/10'
                       : 'bg-slate-900/80 text-slate-200 hover:text-amber-300 border-slate-800/80 hover:border-amber-500/40 hover:bg-slate-800'
@@ -189,21 +191,34 @@ export const Header: React.FC<HeaderProps> = React.memo(({
               rel="noopener noreferrer"
               title="انقر للانتقال إلى البث المباشر لإذاعة القرآن الكريم"
               aria-label="إذاعة القرآن الكريم"
-              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs sm:text-xs md:text-sm font-bold font-serif transition-all duration-300 cursor-pointer shadow-sm border bg-slate-900/80 text-amber-300 border-amber-500/50 hover:border-amber-400 hover:bg-slate-800 hover:scale-105 shrink-0 justify-center"
+              className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 lg:px-2 xl:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs md:text-xs lg:text-[12px] xl:text-sm font-bold font-serif transition-all duration-300 cursor-pointer shadow-sm border bg-slate-900/80 text-amber-300 border-amber-500/50 hover:border-amber-400 hover:bg-slate-800 hover:scale-105 shrink-0 justify-center"
             >
               <Radio className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
               <span className="whitespace-nowrap">إذاعة القرآن 📻</span>
             </a>
 
+            {/* Spiritual Newsletter Digest Button */}
+            {onOpenNewsletterDigest && (
+              <button
+                type="button"
+                onClick={onOpenNewsletterDigest}
+                title="عرض واستلام الملف الإخباري الروحي المعتمد"
+                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 lg:px-2 xl:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs md:text-xs lg:text-[12px] xl:text-sm font-bold font-serif transition-all duration-300 cursor-pointer shadow-sm border bg-emerald-950/80 text-amber-300 border-amber-500/40 hover:border-amber-400 hover:bg-slate-800 shrink-0 justify-center"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <span className="whitespace-nowrap">النشرة الروحية 🗞️</span>
+              </button>
+            )}
+
             {/* User Account & Quota Badge Button */}
             {onOpenClientDashboard ? (
               <button
                 onClick={onOpenClientDashboard}
-                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs sm:text-xs md:text-sm font-bold font-serif transition-all duration-300 cursor-pointer shadow-sm border bg-slate-900/80 text-emerald-300 border-emerald-700/60 hover:border-amber-400 hover:bg-slate-800 shrink-0 justify-center"
+                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 lg:px-2 xl:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs md:text-xs lg:text-[12px] xl:text-sm font-bold font-serif transition-all duration-300 cursor-pointer shadow-sm border bg-slate-900/80 text-emerald-300 border-emerald-700/60 hover:border-amber-400 hover:bg-slate-800 shrink-0 justify-center"
                 title="لوحة تحكم الحساب ورصيد المساحة"
               >
                 <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
-                <span className="whitespace-nowrap">{user?.name ? user.name : 'عضو المنصة (العميل)'}</span>
+                <span className="whitespace-nowrap">{user?.name ? user.name : 'عضو المنصة'}</span>
                 <span className="bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[10px] sm:text-[11px] px-1.5 py-0.5 rounded-md font-mono shrink-0">
                   {user?.role === 'admin' || user?.role === 'vip' ? '👑 مفتوح' : `✨ 3/${user?.balanceCredits ?? 3}`}
                 </span>
@@ -211,7 +226,7 @@ export const Header: React.FC<HeaderProps> = React.memo(({
             ) : onOpenAuth && (
               <button
                 onClick={onOpenAuth}
-                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs sm:text-xs md:text-sm font-bold font-serif transition-all duration-300 cursor-pointer shadow-sm border bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 border-amber-400 shrink-0 justify-center"
+                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 lg:px-2 xl:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs md:text-xs lg:text-[12px] xl:text-sm font-bold font-serif transition-all duration-300 cursor-pointer shadow-sm border bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 border-amber-400 shrink-0 justify-center"
               >
                 <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                 <span className="whitespace-nowrap">تسجيل (3 أحلام مجاناً)</span>

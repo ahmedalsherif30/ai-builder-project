@@ -74,6 +74,15 @@ export const ClientDashboardModal: React.FC<ClientDashboardModalProps> = ({
   const [isGeneratingGift, setIsGeneratingGift] = useState(false);
   const [giftSuccessMsg, setGiftSuccessMsg] = useState('');
 
+  const getClientAuthHeaders = () => {
+    const token = currentUser?.token || localStorage.getItem('explaining_dream_auth_token') || '';
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      'x-auth-token': token
+    };
+  };
+
   const handleCreateGiftCode = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentUser?.email) return;
@@ -82,7 +91,7 @@ export const ClientDashboardModal: React.FC<ClientDashboardModalProps> = ({
     try {
       const res = await fetch('/api/client/create-gift-code', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getClientAuthHeaders(),
         body: JSON.stringify({
           purchaserName: currentUser.name || 'عضو مشترك',
           purchaserEmail: currentUser.email,

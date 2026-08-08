@@ -9,11 +9,13 @@ interface FooterProps {
   setActiveTab: (tab: string) => void;
   onOpenAdmin?: () => void;
   user?: UserProfile;
+  onOpenNewsletterDigest?: (data?: { code: string; contact: string; digest?: any }) => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenAdmin, user }) => {
+export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenAdmin, user, onOpenNewsletterDigest }) => {
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [loadingSubscribe, setLoadingSubscribe] = useState(false);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [legalModalOpen, setLegalModalOpen] = useState(false);
   const [legalModalTab, setLegalModalTab] = useState<'privacy' | 'terms' | 'refund'>('privacy');
@@ -28,12 +30,39 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenAdmin, user 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newsletterEmail) {
-      setSubscribed(true);
-      setTimeout(() => setSubscribed(false), 3000);
-      setNewsletterEmail('');
+    if (!newsletterEmail || !newsletterEmail.trim()) return;
+
+    setLoadingSubscribe(true);
+    try {
+      const res = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          emailOrContact: newsletterEmail.trim(),
+          channel: 'email',
+          userName: user?.name || ''
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSubscribed(true);
+        const contact = newsletterEmail.trim();
+        setNewsletterEmail('');
+        setTimeout(() => setSubscribed(false), 3000);
+        if (onOpenNewsletterDigest) {
+          onOpenNewsletterDigest({
+            code: data.subscriber?.subscriberCode || 'NEWS-2026-X800',
+            contact,
+            digest: data.digest
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Newsletter subscribe error:', err);
+    } finally {
+      setLoadingSubscribe(false);
     }
   };
 
@@ -85,23 +114,37 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenAdmin, user 
             </p>
           </div>
 
-          <form onSubmit={handleSubscribe} className="flex gap-2 w-full md:w-auto">
-            <input
-              type="email"
-              required
-              placeholder="أدخل بريدك الإلكتروني..."
-              value={newsletterEmail}
-              onChange={(e) => setNewsletterEmail(e.target.value)}
-              className="bg-slate-950 border border-emerald-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-400 w-full sm:w-64"
-            />
-            <button
-              type="submit"
-              className="bg-amber-500 text-slate-950 font-bold px-5 py-2.5 rounded-xl text-xs hover:bg-amber-400 transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
-            >
-              <Send className="w-3.5 h-3.5" />
-              <span>{subscribed ? 'تم الاشتراك!' : 'اشتراك'}</span>
-            </button>
-          </form>
+          <div className="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto">
+            <form onSubmit={handleSubscribe} className="flex gap-2 w-full sm:w-auto">
+              <input
+                type="email"
+                required
+                placeholder="أدخل بريدك الإلكتروني..."
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
+                className="bg-slate-950 border border-emerald-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-400 w-full sm:w-64"
+              />
+              <button
+                type="submit"
+                disabled={loadingSubscribe}
+                className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-5 py-2.5 rounded-xl text-xs transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap disabled:opacity-50"
+              >
+                <Send className="w-3.5 h-3.5" />
+                <span>{loadingSubscribe ? 'جاري الاشتراك...' : subscribed ? 'تم الاشتراك!' : 'اشتراك واستلام الملف'}</span>
+              </button>
+            </form>
+
+            {onOpenNewsletterDigest && (
+              <button
+                type="button"
+                onClick={() => onOpenNewsletterDigest()}
+                className="bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/40 font-bold px-4 py-2.5 rounded-xl text-xs transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+                title="عرض وتنزيل الملف الإخباري الروحي المعتمد 2026"
+              >
+                <span>استعراض الملف الإخباري 🗞️</span>
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Links & Brand Footer */}

@@ -182,14 +182,6 @@ export const PersonalVisionsJournal: React.FC<PersonalVisionsJournalProps> = ({
           <span className="bg-emerald-950 text-emerald-300 border border-emerald-500/50 px-3 py-1 rounded-full text-[11px] font-bold">
             حماية SSL 256-bit 🛡️
           </span>
-          <button
-            onClick={handleCopySpiritualPass}
-            className="flex items-center gap-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/50 px-2.5 py-1 rounded-full text-[11px] font-bold transition cursor-pointer"
-            title="نسخ كارت الملف الروحي"
-          >
-            {copiedPass ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-            <span>{copiedPass ? 'تم النسخ' : 'بطاقة السجل'}</span>
-          </button>
         </div>
       </div>
 
