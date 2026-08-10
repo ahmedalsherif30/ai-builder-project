@@ -114,7 +114,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
     activeCouponCode: 'ALSHERIF2026',
     discountPercentage: 20,
     vodafoneCashNumber: '01558955525',
-    instapayUsername: '@explaininddreams / 01558955525',
+    instapayUsername: '@explainingdreams / 01558955525',
     bankIbanDetails: 'EG123456789012345678901234 (البنك الأهلي المصري)',
     paypalEmail: 'ahmedalsherif30@gmail.com',
     westernUnionInfo: 'الاسم: أحمد الشريف - الدولة: مصر - هاتف: +201558955525',

@@ -230,7 +230,7 @@ let currentAdhanStopFn: (() => void) | null = null;
 
 export function getSavedAdhanAudioUrl(): string {
   try {
-    const saved = localStorage.getItem('explainingdream_custom_adhan_mp3');
+    const saved = localStorage.getItem('explainingdream_custom_adhan_mp3') || localStorage.getItem('explainingdreams_custom_adhan_mp3');
     if (saved) return saved;
   } catch (e) {}
   return ADHAN_AUDIO_PRESETS[0].url; // Default to Makkah Adhan

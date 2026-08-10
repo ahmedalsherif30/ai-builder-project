@@ -4,6 +4,7 @@ import { UserProfile } from '../types';
 import { FAQS } from '../data/mockData';
 import { Logo } from './Logo';
 import { LegalPoliciesModal } from './LegalPoliciesModal';
+import { SocialContactSection } from './SocialContactSection';
 
 interface FooterProps {
   setActiveTab: (tab: string) => void;
@@ -146,6 +147,9 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenAdmin, user,
             )}
           </div>
         </div>
+
+        {/* Social & Contact Section */}
+        <SocialContactSection />
 
         {/* Links & Brand Footer */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-6 border-t border-emerald-900/40 text-sm">

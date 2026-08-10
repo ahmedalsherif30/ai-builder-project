@@ -33,7 +33,7 @@ import {
   updateNewsletterDigest,
   logActivity,
   getAllActivityLogs
-} from './src/db/firestoreRepository.js';
+} from './src/db/dbRepository.js';
 
 // Initialize Express app
 const app = express();
@@ -113,6 +113,34 @@ function extractTokenFromRequest(req: express.Request): string | null {
 }
 
 app.use(express.json({ limit: '10mb' }));
+
+// 301 Canonical Domain Normalization Middleware (http -> https, www -> non-www, singular -> plural)
+app.use((req, res, next) => {
+  // Skip API routes, WebSockets, SSE, and dev/preview container environments
+  if (req.originalUrl.startsWith('/api/') || req.originalUrl.startsWith('/ws') || req.originalUrl.startsWith('/sse')) {
+    return next();
+  }
+
+  const rawHost = (req.headers.host || '').toLowerCase();
+  const host = rawHost.split(':')[0]; // strip port if any
+
+  if (host === 'localhost' || host === '127.0.0.1' || host.includes('run.app') || host.includes('localhost')) {
+    return next();
+  }
+
+  const rawProto = req.headers['x-forwarded-proto'] || req.protocol || 'http';
+  const proto = (Array.isArray(rawProto) ? rawProto[0] : rawProto).toLowerCase().split(',')[0].trim();
+
+  if (
+    host === 'www.explainingdream.com' ||
+    host === 'explainingdreams.com' ||
+    host === 'www.explainingdreams.com' ||
+    (host === 'explainingdream.com' && proto === 'http')
+  ) {
+    return res.redirect(301, `https://explainingdream.com${req.originalUrl}`);
+  }
+  next();
+});
 
 // Security Headers Middleware
 app.use((_req, res, next) => {
@@ -281,6 +309,7 @@ app.post('/api/auth/register', async (req, res) => {
         maritalStatus,
         role: isMainAdmin ? 'admin' : 'member',
         planName: isMainAdmin ? 'مدير النظام الرئيسي' : 'خطة العضو المسجل',
+        balanceCredits: isMainAdmin ? 999 : 3,
         subscriptionStartDate: new Date().toISOString(),
         subscriptionEndDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString(),
         dreamsSubmittedCount: 0,
@@ -320,7 +349,7 @@ app.post('/api/auth/register', async (req, res) => {
         vipExpiryDate: cust.subscriptionEndDate,
         notificationsEnabled: true,
         savedDreamCount: cust.dreamsSubmittedCount || 0,
-        balanceCredits: userRole === 'vip' || userRole === 'admin' ? 999 : 3,
+        balanceCredits: userRole === 'vip' || userRole === 'admin' ? 999 : (cust.balanceCredits ?? 3),
         provider,
         token
       }
@@ -376,7 +405,7 @@ app.post('/api/auth/login', async (req, res) => {
         vipExpiryDate: cust.subscriptionEndDate,
         notificationsEnabled: true,
         savedDreamCount: cust.dreamsSubmittedCount || 0,
-        balanceCredits: userRole === 'vip' || userRole === 'admin' ? 999 : 3,
+        balanceCredits: userRole === 'vip' || userRole === 'admin' ? 999 : (cust.balanceCredits ?? 3),
         provider: 'login',
         token
       }
@@ -449,7 +478,7 @@ app.post('/api/client/update-profile', requireClientAuth, async (req, res) => {
         vipExpiryDate: cust.subscriptionEndDate,
         notificationsEnabled: true,
         savedDreamCount: cust.dreamsSubmittedCount || 0,
-        balanceCredits: cust.role === 'vip' || cust.role === 'admin' ? 999 : 3
+        balanceCredits: cust.role === 'vip' || cust.role === 'admin' ? 999 : (cust.balanceCredits ?? 3)
       }
     });
   } catch (err: any) {
@@ -550,10 +579,12 @@ app.post('/api/client/process-referral', async (req, res) => {
 });
 
 // --- Prepaid Gift Code API ---
-app.post('/api/client/create-gift-code', async (req, res) => {
+app.post('/api/client/create-gift-code', requireClientAuth, async (req, res) => {
   try {
+    const authEmail = (req as any).user?.email;
     const { purchaserName, purchaserEmail, serviceType, recipientNote } = req.body;
-    if (!purchaserEmail || !purchaserName) {
+    const targetEmail = (authEmail || purchaserEmail || '').toLowerCase();
+    if (!targetEmail || !purchaserName) {
       return res.status(400).json({ error: 'بيانات المشتري مطلوبة.' });
     }
 
@@ -562,7 +593,7 @@ app.post('/api/client/create-gift-code', async (req, res) => {
       id: `GIFT-${Date.now()}`,
       code: `GIFT-SHERIF-${codeRandom}`,
       purchaserName,
-      purchaserEmail: purchaserEmail.toLowerCase(),
+      purchaserEmail: targetEmail,
       serviceType: serviceType || 'written',
       serviceTitle: serviceType === 'audio' ? 'تفسير صوتي مسجل (كود إهداء)' : serviceType === 'session' ? 'جلسة إرشاد مباشرة (كود إهداء)' : 'تفسير كتابي مفصل (كود إهداء)',
       amountPaid: serviceType === 'audio' ? 49 : serviceType === 'session' ? 89 : 29,
@@ -585,11 +616,12 @@ app.post('/api/client/create-gift-code', async (req, res) => {
   }
 });
 
-app.get('/api/client/my-gift-codes', async (req, res) => {
+app.get('/api/client/my-gift-codes', requireClientAuth, async (req, res) => {
   try {
-    const email = ((req.query.email as string) || '').toLowerCase();
+    const authEmail = (req as any).user?.email;
+    const email = authEmail ? authEmail.toLowerCase() : ((req.query.email as string) || '').toLowerCase();
     const allCodes = await getAllGiftCodes();
-    const codes = allCodes.filter(c => c.purchaserEmail === email || (c.purchaserEmail && (c.purchaserEmail.includes('ahmed.user') || c.purchaserEmail.includes('malki'))));
+    const codes = allCodes.filter(c => c.purchaserEmail && c.purchaserEmail.toLowerCase() === email);
     res.json({ giftCodes: codes });
   } catch (err: any) {
     console.error('Error in /api/client/my-gift-codes:', err);
@@ -938,6 +970,26 @@ app.post('/api/log-activity', async (req, res) => {
   }
 });
 
+// Concurrent request lock map for dream submission credit control
+const dreamLocks = new Map<string, Promise<any>>();
+
+async function runWithDreamLock<T>(userKey: string, task: () => Promise<T>): Promise<T> {
+  const previous = dreamLocks.get(userKey) || Promise.resolve();
+  let release: () => void = () => {};
+  const current = new Promise<void>((resolve) => { release = resolve; });
+  dreamLocks.set(userKey, previous.then(() => current));
+
+  try {
+    await previous;
+    return await task();
+  } finally {
+    release();
+    if (dreamLocks.get(userKey) === current) {
+      dreamLocks.delete(userKey);
+    }
+  }
+}
+
 // 5. AI Dream Interpretation powered by Gemini API (Ahmed Al-Sherif methodology)
 app.post('/api/interpret-dream', async (req, res) => {
   try {
@@ -966,16 +1018,18 @@ app.post('/api/interpret-dream', async (req, res) => {
       return res.status(400).json({ error: 'الرجاء كتابة رقم الهاتف / الواتساب للتواصل والأرشيف.' });
     }
 
-    // Automatically log activity
-    const userName = clientName || (gender === 'female' ? 'رائية' : 'رائي');
-    await logActivity(
-      "dream_submitted",
-      userName,
-      `قام بإدخال حلم جديد: "${dreamText.substring(0, 60)}..."`
-    );
+    const userKey = (clientEmail || clientPhone || 'anonymous').toLowerCase().trim();
 
-    // Check if user exists in customers or create/update customer entry
-    if (clientPhone || clientEmail) {
+    return await runWithDreamLock(userKey, async () => {
+      // Automatically log activity
+      const userName = clientName || (gender === 'female' ? 'رائية' : 'رائي');
+      await logActivity(
+        "dream_submitted",
+        userName,
+        `قام بإدخال حلم جديد: "${dreamText.substring(0, 60)}..."`
+      );
+
+      // Check user existing account and credit limit
       let existingCust = null;
       if (clientEmail) existingCust = await getUserByEmail(clientEmail);
       if (!existingCust && clientPhone) {
@@ -983,39 +1037,16 @@ app.post('/api/interpret-dream', async (req, res) => {
         existingCust = allUsers.find(c => c.phone === clientPhone);
       }
 
-      if (existingCust) {
-        await updateUser(existingCust.id, {
-          dreamsSubmittedCount: (existingCust.dreamsSubmittedCount || 0) + 1,
-          lastActive: "الآن",
-          lastEnteredDream: dreamText,
-          name: clientName || existingCust.name,
-          phone: clientPhone || existingCust.phone
-        });
-      } else {
-        await saveUser({
-          id: `CUST-${Date.now().toString().slice(-4)}`,
-          name: clientName || "عميل جديد",
-          email: clientEmail || `${clientPhone}@explaininddreams.com`,
-          phone: clientPhone || "",
-          gender,
-          maritalStatus,
-          role: "free",
-          planName: "خطة التجربة المجانية",
-          subscriptionStartDate: new Date().toISOString(),
-          subscriptionEndDate: new Date().toISOString(),
-          dreamsSubmittedCount: 1,
-          totalSpentUsd: 0,
-          status: "active",
-          createdAt: new Date().toISOString(),
-          lastActive: "الآن",
-          lastEnteredDream: dreamText
-        });
+      const isFreeMember = existingCust ? (existingCust.role === 'free' || existingCust.role === 'member') : true;
+      const currentCredits = existingCust ? (existingCust.balanceCredits ?? 3) : 3;
+
+      if (existingCust && isFreeMember && currentCredits <= 0) {
+        return res.status(403).json({ error: '⚠️ لقد استنفذت مساحتك المبدئية المجانية (3 أحلام). لتزويد وتوسيع مساحتك وتفسير أحلام جديدة، يرجى الاشتراك في إحدى الخدمات المدفوعة.' });
       }
-    }
 
-    const ai = getGenAI();
+      const ai = getGenAI();
 
-    const systemInstruction = `
+      const systemInstruction = `
 أنت المساعد الذكي الروحي المعتمد والشامل لمنصة "ExplainingDream.com" والمستند إلى المنهجية التفسيرية للشيخ والباحث الروحي "أحمد الشريف" (طبعة 2026 من كتاب "تأويلات روحية").
 
 مهاراتك وبنائك العلمي والروحي القائم عليه:
@@ -1029,7 +1060,7 @@ app.post('/api/interpret-dream', async (req, res) => {
 أجب بتنسيق JSON حصري باللغة العربية المتقنة.
 `;
 
-    const userPrompt = `
+      const userPrompt = `
 تفاصيل الحلم/الرؤيا:
 "${dreamText.trim()}"
 
@@ -1043,110 +1074,146 @@ app.post('/api/interpret-dream', async (req, res) => {
 قم بتفكيك الرؤيا وتأويلها طبقًا لمنهجية أحمد الشريف.
 `;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
-      contents: userPrompt,
-      config: {
-        systemInstruction,
-        temperature: 0.7,
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            summary: {
-              type: Type.STRING,
-              description: 'عنوان مختصر يعبر عن جوهر الرؤيا',
-            },
-            overallInterpretation: {
-              type: Type.STRING,
-              description: 'التفسير الإجمالي المعمق والرؤية الكلية للحلم',
-            },
-            symbolsBreakdown: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  symbol: { type: Type.STRING, description: 'الرمز الموجود بالحلم' },
-                  meaning: { type: Type.STRING, description: 'معنى الرمز وتأويله الخاص' },
-                  quranReference: { type: Type.STRING, description: 'الدليل القرآني إن وجد' },
-                  hadithReference: { type: Type.STRING, description: 'الدليل من السنة أو الأثر إن وجد' },
-                },
-                required: ['symbol', 'meaning'],
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.6-flash',
+        contents: userPrompt,
+        config: {
+          systemInstruction,
+          temperature: 0.7,
+          responseMimeType: 'application/json',
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              summary: {
+                type: Type.STRING,
+                description: 'عنوان مختصر يعبر عن جوهر الرؤيا',
               },
-              description: 'تفكيك الرموز الرئيسية في المنام',
+              overallInterpretation: {
+                type: Type.STRING,
+                description: 'التفسير الإجمالي المعمق والرؤية الكلية للحلم',
+              },
+              symbolsBreakdown: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    symbol: { type: Type.STRING, description: 'الرمز الموجود بالحلم' },
+                    meaning: { type: Type.STRING, description: 'معنى الرمز وتأويله الخاص' },
+                    quranReference: { type: Type.STRING, description: 'الدليل القرآني إن وجد' },
+                    hadithReference: { type: Type.STRING, description: 'الدليل من السنة أو الأثر إن وجد' },
+                  },
+                  required: ['symbol', 'meaning'],
+                },
+                description: 'تفكيك الرموز الرئيسية في المنام',
+              },
+              spiritualAspect: {
+                type: Type.STRING,
+                description: 'البُعد الروحي والإشارة الإلهية أو التوجيه الرباني',
+              },
+              psychologicalContext: {
+                type: Type.STRING,
+                description: 'الجانب النفسي وتأثير الذاكرة أو العقل الباطن',
+              },
+              methodologyNote: {
+                type: Type.STRING,
+                description: 'ملاحظة خاصة واستشهاد بقواعد كتاب أحمد الشريف طبعة 2026',
+              },
+              recommendedAdhkar: {
+                type: Type.ARRAY,
+                items: { type: Type.STRING },
+                description: 'قائمة الأذكار والأدعية المقترحة للتحصين والطمأنينة',
+              },
+              quranicVerses: {
+                type: Type.ARRAY,
+                items: { type: Type.STRING },
+                description: 'آيات قرآنية مستحبة للقراءة والتدبر',
+              },
+              actionableAdvice: {
+                type: Type.STRING,
+                description: 'نصيحة عمل خطوات إيجابية يقوم بها الرائي',
+              },
+              requiresPersonalConsultation: {
+                type: Type.BOOLEAN,
+                description: 'هل الرؤيا معقدة وتتطلب جلسة خاصة أو استشارة مباشرة مع الشيخ أحمد الشريف',
+              },
             },
-            spiritualAspect: {
-              type: Type.STRING,
-              description: 'البُعد الروحي والإشارة الإلهية أو التوجيه الرباني',
-            },
-            psychologicalContext: {
-              type: Type.STRING,
-              description: 'الجانب النفسي وتأثير الذاكرة أو العقل الباطن',
-            },
-            methodologyNote: {
-              type: Type.STRING,
-              description: 'ملاحظة خاصة واستشهاد بقواعد كتاب أحمد الشريف طبعة 2026',
-            },
-            recommendedAdhkar: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
-              description: 'قائمة الأذكار والأدعية المقترحة للتحصين والطمأنينة',
-            },
-            quranicVerses: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
-              description: 'آيات قرآنية مستحبة للقراءة والتدبر',
-            },
-            actionableAdvice: {
-              type: Type.STRING,
-              description: 'نصيحة عمل خطوات إيجابية يقوم بها الرائي',
-            },
-            requiresPersonalConsultation: {
-              type: Type.BOOLEAN,
-              description: 'هل الرؤيا معقدة وتتطلب جلسة خاصة أو استشارة مباشرة مع الشيخ أحمد الشريف',
-            },
+            required: [
+              'summary',
+              'overallInterpretation',
+              'symbolsBreakdown',
+              'spiritualAspect',
+              'psychologicalContext',
+              'methodologyNote',
+              'recommendedAdhkar',
+              'quranicVerses',
+              'actionableAdvice',
+              'requiresPersonalConsultation',
+            ],
           },
-          required: [
-            'summary',
-            'overallInterpretation',
-            'symbolsBreakdown',
-            'spiritualAspect',
-            'psychologicalContext',
-            'methodologyNote',
-            'recommendedAdhkar',
-            'quranicVerses',
-            'actionableAdvice',
-            'requiresPersonalConsultation',
-          ],
         },
-      },
+      });
+
+      const responseText = response.text || '{}';
+      const parsedData = JSON.parse(responseText);
+
+      const result = {
+        id: `dream-${Date.now()}`,
+        ...parsedData,
+        timestamp: new Date().toISOString(),
+      };
+
+      // Save to Firestore dreams collection for Admin Dashboard feed
+      await saveDream({
+        id: `DREAM-${Date.now().toString().slice(-4)}`,
+        clientName: clientName || (gender === 'female' ? 'زائرة (رائية)' : 'زائر (رائي)'),
+        clientEmail: clientEmail || 'غير مسجل',
+        clientPhone: clientPhone || '',
+        gender,
+        maritalStatus,
+        dreamText,
+        status: 'unread',
+        createdAt: new Date().toISOString(),
+        aiResponseSummary: parsedData.summary || 'تفسير ذكاء اصطناعي محول',
+        source: 'ai_interpreter'
+      });
+
+      // Deduct credit and update user record upon successful interpretation
+      if (clientPhone || clientEmail) {
+        if (existingCust) {
+          const newCredits = isFreeMember ? Math.max(0, currentCredits - 1) : (existingCust.balanceCredits ?? 999);
+          await updateUser(existingCust.id, {
+            dreamsSubmittedCount: (existingCust.dreamsSubmittedCount || 0) + 1,
+            balanceCredits: newCredits,
+            lastActive: "الآن",
+            lastEnteredDream: dreamText,
+            name: clientName || existingCust.name,
+            phone: clientPhone || existingCust.phone
+          });
+        } else {
+          await saveUser({
+            id: `CUST-${Date.now().toString().slice(-4)}`,
+            name: clientName || "عميل جديد",
+            email: clientEmail || `${clientPhone}@explainingdream.com`,
+            phone: clientPhone || "",
+            gender,
+            maritalStatus,
+            role: "free",
+            planName: "خطة التجربة المجانية",
+            subscriptionStartDate: new Date().toISOString(),
+            subscriptionEndDate: new Date().toISOString(),
+            dreamsSubmittedCount: 1,
+            balanceCredits: 2,
+            totalSpentUsd: 0,
+            status: "active",
+            createdAt: new Date().toISOString(),
+            lastActive: "الآن",
+            lastEnteredDream: dreamText
+          });
+        }
+      }
+
+      return res.json(result);
     });
-
-    const responseText = response.text || '{}';
-    const parsedData = JSON.parse(responseText);
-
-    const result = {
-      id: `dream-${Date.now()}`,
-      ...parsedData,
-      timestamp: new Date().toISOString(),
-    };
-
-    // Save to Firestore dreams collection for Admin Dashboard feed
-    await saveDream({
-      id: `DREAM-${Date.now().toString().slice(-4)}`,
-      clientName: clientName || (gender === 'female' ? 'زائرة (رائية)' : 'زائر (رائي)'),
-      clientEmail: clientEmail || 'غير مسجل',
-      clientPhone: clientPhone || '',
-      gender,
-      maritalStatus,
-      dreamText,
-      status: 'unread',
-      createdAt: new Date().toISOString(),
-      aiResponseSummary: parsedData.summary || 'تفسير ذكاء اصطناعي محول',
-      source: 'ai_interpreter'
-    });
-
-    return res.json(result);
   } catch (error: any) {
     console.error('Error in dream interpretation:', error);
     return res.status(500).json({
@@ -1177,7 +1244,7 @@ app.post('/api/paid-requests', async (req, res) => {
       return res.status(400).json({ error: 'الرجاء إدخال الاسم رقم الهاتف أو البريد، وتفاصيل الحلم.' });
     }
 
-    const effectiveEmail = clientEmail || `${clientPhone}@explaininddreams.com`;
+    const effectiveEmail = clientEmail || `${clientPhone}@explainingdream.com`;
 
     let validatedPrice = OFFICIAL_PRICES[serviceId] ?? OFFICIAL_PRICES[deliveryType] ?? OFFICIAL_PRICES['srv-custom'];
     if (couponCode && couponCode.toUpperCase().includes('DISCOUNT10')) {

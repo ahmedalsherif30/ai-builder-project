@@ -143,7 +143,7 @@ export const AboutUsSection: React.FC = () => {
           <div className="bg-slate-950 p-4 rounded-xl border border-emerald-900">
             <BookOpen className="w-6 h-6 text-amber-400 mx-auto mb-2" />
             <p className="font-bold text-slate-200">البريد الإلكتروني المباشر:</p>
-            <p className="text-amber-300 font-mono text-xs mt-1 select-all">info@explaininddreams.com</p>
+            <p className="text-amber-300 font-mono text-xs mt-1 select-all">info@explainingdream.com</p>
           </div>
         </div>
       </div>

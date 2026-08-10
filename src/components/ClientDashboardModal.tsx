@@ -916,7 +916,7 @@ export const ClientDashboardModal: React.FC<ClientDashboardModalProps> = ({
                 <p><strong>الطلب:</strong> {selectedOrderForReceipt.serviceTitle}</p>
                 <p><strong>المبلغ المطلوب:</strong> <span className="text-amber-400 font-mono font-bold">${selectedOrderForReceipt.amountPaid} USD</span></p>
                 <p className="text-slate-400 text-[11px]">
-                  💡 يتم التحويل عبر فودافون كاش (01558955525) أو إنستا باي (@explaininddreams) أو البنك، ثم إرفاق صورة السكرين هنا للتحقق الفوري.
+                  💡 يتم التحويل عبر فودافون كاش (01558955525) أو إنستا باي (@explainingdreams) أو البنك، ثم إرفاق صورة السكرين هنا للتحقق الفوري.
                 </p>
               </div>
 
