@@ -23,13 +23,13 @@ export const MarkdownArticleRenderer: React.FC<MarkdownArticleRendererProps> = (
     const ListTag = currentList.type === 'ul' ? 'ul' : 'ol';
     const listStyle =
       currentList.type === 'ul'
-        ? 'list-disc list-inside space-y-2.5 my-5 pr-2 font-serif text-slate-200'
-        : 'list-decimal list-inside space-y-2.5 my-5 pr-2 font-serif text-slate-200';
+        ? 'list-disc list-inside space-y-2 my-4 pr-2 font-serif text-slate-200'
+        : 'list-decimal list-inside space-y-2 my-4 pr-2 font-serif text-slate-200';
 
     renderedElements.push(
       <ListTag key={`${keyPrefix}-list`} className={listStyle}>
         {currentList.items.map((item, idx) => (
-          <li key={idx} className="leading-relaxed bg-slate-900/60 p-2.5 rounded-xl border border-emerald-900/40">
+          <li key={idx} className="leading-relaxed sm:leading-loose text-slate-200 text-base sm:text-lg font-serif py-1">
             {formatInlineMarkdown(item)}
           </li>
         ))}
@@ -133,9 +133,9 @@ export const MarkdownArticleRenderer: React.FC<MarkdownArticleRendererProps> = (
         <h3
           key={`h3-${index}`}
           id={headingId}
-          className="text-lg sm:text-xl font-bold font-serif text-emerald-300 mt-8 mb-3 pr-4 border-r-4 border-amber-400 bg-emerald-950/40 py-2 rounded-l-2xl flex items-center gap-2.5 scroll-mt-24"
+          className="text-lg sm:text-xl font-bold font-serif text-emerald-300 mt-8 mb-3 px-4 py-2.5 bg-emerald-950/60 border border-emerald-800/60 rounded-xl flex items-center gap-2.5 scroll-mt-24 shadow-sm"
         >
-          <ChevronLeft className="w-4 h-4 text-amber-400 shrink-0" />
+          <div className="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0 shadow-sm" />
           <span>{cleanTitle}</span>
         </h3>
       );
@@ -149,7 +149,7 @@ export const MarkdownArticleRenderer: React.FC<MarkdownArticleRendererProps> = (
       renderedElements.push(
         <blockquote
           key={`quote-${index}`}
-          className="my-6 p-5 bg-gradient-to-r from-emerald-950 via-slate-950 to-emerald-950 border-r-4 border-amber-400 rounded-2xl text-amber-200 font-serif text-sm sm:text-base leading-relaxed shadow-lg relative"
+          className="my-6 p-5 bg-gradient-to-r from-emerald-950 via-slate-950 to-emerald-950 border border-amber-500/30 rounded-2xl text-amber-200 font-serif text-base sm:text-lg leading-relaxed shadow-lg relative"
         >
           <Quote className="w-6 h-6 text-amber-400/40 absolute top-3 left-3 pointer-events-none" />
           <div className="relative z-10 pl-6">{formatInlineMarkdown(quoteText)}</div>
@@ -193,7 +193,7 @@ export const MarkdownArticleRenderer: React.FC<MarkdownArticleRendererProps> = (
     renderedElements.push(
       <p
         key={`p-${index}`}
-        className="text-slate-200 font-serif text-sm sm:text-base leading-relaxed my-4 text-justify"
+        className="text-slate-100 font-serif text-base sm:text-lg md:text-xl leading-relaxed sm:leading-loose my-5 text-justify"
       >
         {formatInlineMarkdown(trimmed)}
       </p>

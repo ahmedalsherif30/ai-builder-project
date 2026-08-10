@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { BookOpen, Sparkles, ShieldCheck, Heart, Moon, MessageSquare, Compass, Crown, Search, X, User, Radio } from 'lucide-react';
+import { BookOpen, Sparkles, Heart, Moon, MessageSquare, Compass, Crown, Search, X, User, Radio } from 'lucide-react';
 import { UserProfile } from '../types';
 import { Logo } from './Logo';
 import { NewsTicker } from './NewsTicker';
-import { isAdminUser } from '../utils/authUtils';
 
 interface HeaderProps {
   activeTab: string;
@@ -137,21 +136,6 @@ export const Header: React.FC<HeaderProps> = React.memo(({
               )}
             </div>
           </form>
-
-          {/* Admin Dashboard Quick Access if Admin */}
-          {isAdminUser(user) && (
-            <div className="hidden lg:flex items-center shrink-0">
-              <button
-                onClick={() => setIsAdminOpen(true)}
-                className="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer shadow-md shrink-0 font-serif"
-                title="لوحة الإدارة"
-                aria-label="لوحة الإدارة"
-              >
-                <ShieldCheck className="w-4 h-4 text-slate-950" />
-                <span>لوحة الإدارة</span>
-              </button>
-            </div>
-          )}
         </div>
 
         {/* Horizontal Navigation Strip with Balanced, Parallel Single-Row Buttons */}
@@ -196,55 +180,6 @@ export const Header: React.FC<HeaderProps> = React.memo(({
               <Radio className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
               <span className="whitespace-nowrap">إذاعة القرآن 📻</span>
             </a>
-
-            {/* Spiritual Newsletter Digest Button */}
-            {onOpenNewsletterDigest && (
-              <button
-                type="button"
-                onClick={onOpenNewsletterDigest}
-                title="عرض واستلام الملف الإخباري الروحي المعتمد"
-                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 lg:px-2 xl:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs md:text-xs lg:text-[12px] xl:text-sm font-bold font-serif transition-all duration-300 cursor-pointer shadow-sm border bg-emerald-950/80 text-amber-300 border-amber-500/40 hover:border-amber-400 hover:bg-slate-800 shrink-0 justify-center"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                <span className="whitespace-nowrap">النشرة الروحية 🗞️</span>
-              </button>
-            )}
-
-            {/* User Account & Quota Badge Button */}
-            {onOpenClientDashboard ? (
-              <button
-                onClick={onOpenClientDashboard}
-                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 lg:px-2 xl:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs md:text-xs lg:text-[12px] xl:text-sm font-bold font-serif transition-all duration-300 cursor-pointer shadow-sm border bg-slate-900/80 text-emerald-300 border-emerald-700/60 hover:border-amber-400 hover:bg-slate-800 shrink-0 justify-center"
-                title="لوحة تحكم الحساب ورصيد المساحة"
-              >
-                <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
-                <span className="whitespace-nowrap">{user?.name ? user.name : 'عضو المنصة'}</span>
-                <span className="bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[10px] sm:text-[11px] px-1.5 py-0.5 rounded-md font-mono shrink-0">
-                  {user?.role === 'admin' || user?.role === 'vip' ? '👑 مفتوح' : `✨ 3/${user?.balanceCredits ?? 3}`}
-                </span>
-              </button>
-            ) : onOpenAuth && (
-              <button
-                onClick={onOpenAuth}
-                className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 lg:px-2 xl:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs md:text-xs lg:text-[12px] xl:text-sm font-bold font-serif transition-all duration-300 cursor-pointer shadow-sm border bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 border-amber-400 shrink-0 justify-center"
-              >
-                <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                <span className="whitespace-nowrap">تسجيل (3 أحلام مجاناً)</span>
-              </button>
-            )}
-
-            {/* Admin Dashboard Button for Small Screens */}
-            {isAdminUser(user) && (
-              <button
-                onClick={() => setIsAdminOpen(true)}
-                className="lg:hidden flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs sm:text-xs md:text-sm font-bold font-serif transition-all duration-300 cursor-pointer shadow-sm border bg-amber-500 hover:bg-amber-400 text-slate-950 border-amber-400 shrink-0 justify-center"
-                title="لوحة الإدارة"
-                aria-label="لوحة الإدارة"
-              >
-                <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-950 shrink-0" />
-                <span className="whitespace-nowrap">لوحة الإدارة</span>
-              </button>
-            )}
           </div>
         </nav>
       </div>

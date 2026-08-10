@@ -10,6 +10,24 @@ export interface SocialPlatformConfig {
 
 export const OFFICIAL_SOCIAL_PLATFORMS: SocialPlatformConfig[] = [
   {
+    id: 'whatsapp',
+    name: 'WhatsApp',
+    nameAr: 'واتساب',
+    handle: '+20 155 895 5525',
+    url: 'https://wa.me/201558955525',
+    badgeColor: 'from-emerald-600 to-teal-700',
+    category: 'contact',
+  },
+  {
+    id: 'facebook',
+    name: 'Facebook',
+    nameAr: 'فيسبوك',
+    handle: '@explainingdreams',
+    url: 'https://www.facebook.com/explainingdreams',
+    badgeColor: 'from-blue-600 via-blue-700 to-indigo-800',
+    category: 'social',
+  },
+  {
     id: 'instagram',
     name: 'Instagram',
     nameAr: 'إنستغرام',
@@ -37,15 +55,6 @@ export const OFFICIAL_SOCIAL_PLATFORMS: SocialPlatformConfig[] = [
     category: 'social',
   },
   {
-    id: 'pinterest',
-    name: 'Pinterest',
-    nameAr: 'بينتريست',
-    handle: '@explainingdreams',
-    url: 'https://www.pinterest.com/explainingdreams',
-    badgeColor: 'from-red-600 to-rose-700',
-    category: 'social',
-  },
-  {
     id: 'tiktok',
     name: 'TikTok',
     nameAr: 'تيك توك',
@@ -64,20 +73,11 @@ export const OFFICIAL_SOCIAL_PLATFORMS: SocialPlatformConfig[] = [
     category: 'social',
   },
   {
-    id: 'linkedin',
-    name: 'LinkedIn',
-    nameAr: 'لينكد إن',
-    handle: 'explainingdreams',
-    url: 'https://www.linkedin.com/company/explainingdreams',
-    badgeColor: 'from-blue-600 to-indigo-700',
-    category: 'social',
-  },
-  {
     id: 'youtube',
     name: 'YouTube',
     nameAr: 'يوتيوب',
-    handle: '@explainingdreams',
-    url: 'https://www.youtube.com/@explainingdreams',
+    handle: '@explainingdream',
+    url: 'https://www.youtube.com/@explainingdream',
     badgeColor: 'from-red-600 to-red-700',
     category: 'social',
   },

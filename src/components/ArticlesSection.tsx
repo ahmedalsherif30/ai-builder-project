@@ -70,8 +70,7 @@ export const ArticlesSection: React.FC<ArticlesSectionProps> = ({ user, onNaviga
       const titleMatch = art.title.toLowerCase().includes(q);
       const excerptMatch = art.excerpt.toLowerCase().includes(q);
       const catMatch = art.category.toLowerCase().includes(q);
-      const refMatch = art.bookChapterReference?.toLowerCase().includes(q) || false;
-      if (!titleMatch && !excerptMatch && !catMatch && !refMatch) return false;
+      if (!titleMatch && !excerptMatch && !catMatch) return false;
     }
 
     return true;
@@ -98,7 +97,7 @@ export const ArticlesSection: React.FC<ArticlesSectionProps> = ({ user, onNaviga
             <div>
               <div className="inline-flex items-center gap-1.5 bg-emerald-900/80 border border-emerald-700/80 px-3 py-1 rounded-full text-xs text-amber-300 font-serif mb-1">
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>المرجع المعتمد: كتاب "تأويلات روحية" (طبعة 2026) – للباحث والمؤلف أحمد الشريف</span>
+                <span>المرجع المعتمد: منهج "تأويلات روحية" (طبعة 2026) – للباحث والمؤلف أحمد الشريف</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 font-serif">
                 مكتبة المقالات والدراسات التفسيرية
@@ -292,17 +291,17 @@ export const ArticlesSection: React.FC<ArticlesSectionProps> = ({ user, onNaviga
       )}
 
       {/* Articles Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {articlesToDisplay.slice(0, activeTab === 'all' ? visibleCount : articlesToDisplay.length).map((art) => (
           <div
             key={art.id}
             onClick={() => {
               setSelectedArticle(art);
             }}
-            className="bg-slate-900/90 border border-emerald-900/60 hover:border-amber-400/60 rounded-3xl overflow-hidden shadow-xl transition duration-300 cursor-pointer group flex flex-col justify-between"
+            className="bg-slate-900/90 border border-emerald-900/60 hover:border-amber-400/60 rounded-3xl overflow-hidden shadow-2xl transition duration-300 cursor-pointer group flex flex-col justify-between hover:-translate-y-1"
           >
             <div>
-              <div className="h-52 overflow-hidden relative">
+              <div className="h-60 sm:h-64 overflow-hidden relative">
                 <img
                   src={art.imageUrl}
                   alt={art.title}
@@ -313,39 +312,33 @@ export const ArticlesSection: React.FC<ArticlesSectionProps> = ({ user, onNaviga
                     e.currentTarget.src = 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=1200';
                   }}
                 />
-                <span className="absolute top-3 right-3 bg-slate-950/90 border border-amber-500/40 text-amber-300 text-[11px] px-3 py-1 rounded-full font-serif font-bold shadow-md">
+                <span className="absolute top-4 right-4 bg-slate-950/90 border border-amber-500/40 text-amber-300 text-xs sm:text-sm px-3.5 py-1.5 rounded-xl font-serif font-bold shadow-md">
                   {art.category}
                 </span>
 
-                {art.bookChapterReference && (
-                  <span className="absolute bottom-3 right-3 bg-emerald-950/90 border border-emerald-700/80 text-emerald-200 text-[10px] px-2.5 py-0.5 rounded-lg font-serif">
-                    {art.bookChapterReference}
-                  </span>
-                )}
-
-                <span className="absolute bottom-3 left-3 bg-slate-950/90 border border-emerald-700 text-emerald-300 text-[10px] px-2.5 py-0.5 rounded-md font-serif flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3 text-emerald-400" /> موثق
+                <span className="absolute bottom-4 left-4 bg-slate-950/90 border border-emerald-700 text-emerald-300 text-xs px-3 py-1 rounded-md font-serif flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> موثق
                 </span>
               </div>
 
-              <div className="p-6 space-y-3">
-                <div className="flex items-center gap-3 text-[11px] text-slate-400 font-serif">
-                  <span className="flex items-center gap-1">
-                    <UserIcon className="w-3.5 h-3.5 text-emerald-400" /> {art.author}
+              <div className="p-6 sm:p-7 space-y-4">
+                <div className="flex items-center gap-3 text-xs text-slate-300 font-serif">
+                  <span className="flex items-center gap-1 text-amber-400 font-bold">
+                    <UserIcon className="w-4 h-4" /> {art.author}
                   </span>
                   <span>•</span>
                   <span className="flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5 text-amber-400" /> {art.readTime}
+                    <Clock className="w-4 h-4 text-emerald-400" /> {art.readTime}
                   </span>
                   <span>•</span>
-                  <span className="font-mono text-[10px] text-slate-500">{art.publishedAt}</span>
+                  <span className="font-mono text-xs text-slate-400">{art.publishedAt}</span>
                 </div>
 
-                <h3 className="text-base sm:text-lg font-bold text-slate-100 font-serif group-hover:text-amber-300 transition line-clamp-2 leading-snug">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-100 font-serif group-hover:text-amber-300 transition line-clamp-2 leading-snug">
                   {art.title}
                 </h3>
 
-                <p className="text-xs text-slate-300 font-serif leading-relaxed line-clamp-3">
+                <p className="text-sm sm:text-base text-slate-300 font-serif line-clamp-3 leading-relaxed">
                   {sanitizeMarkdownText(art.excerpt)}
                 </p>
               </div>

@@ -131,20 +131,9 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenAdmin, user,
                 className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-5 py-2.5 rounded-xl text-xs transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap disabled:opacity-50"
               >
                 <Send className="w-3.5 h-3.5" />
-                <span>{loadingSubscribe ? 'جاري الاشتراك...' : subscribed ? 'تم الاشتراك!' : 'اشتراك واستلام الملف'}</span>
+                <span>{loadingSubscribe ? 'جاري الاشتراك...' : subscribed ? 'تم الاشتراك!' : 'تأكيد الاشتراك في النشرة'}</span>
               </button>
             </form>
-
-            {onOpenNewsletterDigest && (
-              <button
-                type="button"
-                onClick={() => onOpenNewsletterDigest()}
-                className="bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/40 font-bold px-4 py-2.5 rounded-xl text-xs transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
-                title="عرض وتنزيل الملف الإخباري الروحي المعتمد 2026"
-              >
-                <span>استعراض الملف الإخباري 🗞️</span>
-              </button>
-            )}
           </div>
         </div>
 

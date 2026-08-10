@@ -186,7 +186,7 @@ export const BookShowcase: React.FC<BookShowcaseProps> = ({ onNavigateToServices
               </h3>
             </div>
 
-            <div className="bg-slate-950 border border-amber-500/30 p-5 rounded-xl space-y-3 font-serif text-slate-200 text-xs sm:text-sm leading-relaxed border-r-4 border-r-amber-500">
+            <div className="bg-slate-950 border border-amber-500/40 p-5 rounded-xl space-y-3 font-serif text-slate-200 text-xs sm:text-sm leading-relaxed shadow-sm">
               <p className="font-bold text-amber-300">
                 🔒 تنبيه هام بشأن محتويات ومخطوطة الكتاب:
               </p>

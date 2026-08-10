@@ -47,22 +47,26 @@ export const UserAuthModal: React.FC<UserAuthModalProps> = ({
 
   if (!isOpen) return null;
 
-  // Handle Social Login Initiate
+  // Handle Social Login Initiate - Prompts user to confirm their real Google/Facebook details
   const initiateSocialAuth = (provider: 'google' | 'facebook') => {
+    setErrorMsg('');
     setSocialModalProvider(provider);
-    if (provider === 'google') {
-      setSocialName(name || 'مستخدم Google');
-      setSocialEmail(email || `user.${Date.now().toString().slice(-4)}@gmail.com`);
-    } else {
-      setSocialName(name || 'مستخدم Facebook');
-      setSocialEmail(email || `user.${Date.now().toString().slice(-4)}@facebook.com`);
-    }
+    setSocialName(name.trim() || '');
+    setSocialEmail(email.trim() || '');
   };
 
-  // Submit Social Auth
+  // Submit Social Auth with real user data
   const handleSocialAuthSubmit = async () => {
-    if (!socialEmail || !socialName) {
-      setErrorMsg('الرجاء التأكد من كتابة البريد والاسم.');
+    const cleanEmail = socialEmail.trim();
+    const cleanName = socialName.trim();
+
+    if (!cleanEmail || !cleanEmail.includes('@')) {
+      setErrorMsg('الرجاء التأكد من كتابة البريد الإلكتروني الحقيقي بشكل صحيح (مثال: example@gmail.com).');
+      return;
+    }
+
+    if (!cleanName) {
+      setErrorMsg('الرجاء التأكد من كتابة اسمك الحقيقي أو الاسم المفضل لديك.');
       return;
     }
 
@@ -74,8 +78,8 @@ export const UserAuthModal: React.FC<UserAuthModalProps> = ({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: socialName,
-          email: socialEmail,
+          name: cleanName,
+          email: cleanEmail,
           phone,
           gender,
           maritalStatus,
@@ -288,20 +292,22 @@ export const UserAuthModal: React.FC<UserAuthModalProps> = ({
                   </svg>
                 )}
               </div>
-              <h3 className="text-base font-bold text-slate-100 font-serif">
-                التسجيل المباشر عبر حساب {socialModalProvider === 'google' ? 'Google' : 'Facebook'}
+              <h3 className="text-base font-bold text-amber-300 font-serif">
+                تأكيد الربط بحسابك الفعلي على {socialModalProvider === 'google' ? 'Google / Gmail' : 'Facebook'}
               </h3>
-              <p className="text-xs text-slate-400">
-                يرجى مراجعة وتأكيد بيانات صفحتك لتأكيد التسجيل بضغطة واحدة:
+              <p className="text-xs text-slate-300">
+                يرجى التأكد من كتابة وتأكيد بريدك الإلكتروني والاسم الصحيحين المسجلين على هاتفك أو كمبيوترك لاستلام التفسير بضغطة واحدة:
               </p>
             </div>
 
             <div className="space-y-3 text-xs">
               <div className="space-y-1">
-                <label className="text-slate-300 font-bold block">الاسم المستعار (أو اسمك المفضل):</label>
+                <label className="text-slate-300 font-bold block">الاسم الحقيقي (أو الاسم المفضل):</label>
                 <input
                   type="text"
-                  placeholder="مثال: الرائي_أحمد أو مريم2026"
+                  required
+                  autoComplete="name"
+                  placeholder="أدخل اسمك الحقيقي المسجل بالحساب..."
                   value={socialName}
                   onChange={(e) => setSocialName(e.target.value)}
                   className="w-full bg-slate-950 border border-emerald-900 rounded-xl p-2.5 text-xs text-slate-100 focus:outline-none focus:border-amber-400"
@@ -309,9 +315,12 @@ export const UserAuthModal: React.FC<UserAuthModalProps> = ({
               </div>
 
               <div className="space-y-1">
-                <label className="text-slate-300 font-bold block">البريد الإلكتروني المعتمد:</label>
+                <label className="text-slate-300 font-bold block">البريد الإلكتروني الحقيقي (Gmail/Facebook):</label>
                 <input
                   type="email"
+                  required
+                  autoComplete="email"
+                  placeholder="your.real.email@gmail.com"
                   value={socialEmail}
                   onChange={(e) => setSocialEmail(e.target.value)}
                   className="w-full bg-slate-950 border border-emerald-900 rounded-xl p-2.5 text-xs text-slate-100 font-mono focus:outline-none focus:border-amber-400"
@@ -445,6 +454,7 @@ export const UserAuthModal: React.FC<UserAuthModalProps> = ({
                     <input
                       type="text"
                       required
+                      autoComplete="name"
                       placeholder="مثال: الرائي_أحمد أو مريم2026"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
@@ -461,6 +471,7 @@ export const UserAuthModal: React.FC<UserAuthModalProps> = ({
                   <input
                     type="email"
                     required
+                    autoComplete="email"
                     placeholder="your.email@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -476,6 +487,7 @@ export const UserAuthModal: React.FC<UserAuthModalProps> = ({
                   <input
                     type="password"
                     required
+                    autoComplete={authMode === 'register' ? 'new-password' : 'current-password'}
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -492,6 +504,7 @@ export const UserAuthModal: React.FC<UserAuthModalProps> = ({
                     <div className="relative">
                       <input
                         type="tel"
+                        autoComplete="tel"
                         placeholder="+966 50 123 4567"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}

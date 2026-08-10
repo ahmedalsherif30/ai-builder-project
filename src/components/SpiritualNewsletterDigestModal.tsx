@@ -78,19 +78,19 @@ export const SpiritualNewsletterDigestModal: React.FC<SpiritualNewsletterDigestM
     subtitle: digestData?.subtitle || "النشرة البريدية الرسمية لمنصة ExplainingDream.com - طبعة 2026",
     author: digestData?.author || "الشيخ والباحث د. أحمد الشريف",
     welcomeMessage: digestData?.welcomeMessage || "أهلاً ومرحباً بك في النشرة الروحية البريدية المعتمدة. يسعدنا انضمامك لمجتمع منصة ExplainingDream.com لتلقي أحدث الأبحاث وتنبيهات الدروس المباشرة والبشائر المنامية.",
-    breakingNews: digestData?.breakingNews || "تحديث طبعة 2026 لكتاب (تأويلات روحية): تم رفع 120 فصلاً جديداً وموسوعة الرموز القرآنية المباشرة، مع تفعيل خدمة التفسير الصوتي الفوري عبر الواتساب والذكاء الاصطناعي.",
+    breakingNews: digestData?.breakingNews || "تحديث منصة تعبير الأحلام: تم رفع دراسات متخصصة وموسوعة الرموز القرآنية المباشرة، مع تفعيل خدمة التفسير الذكي والخدمات الصوتية المباشرة.",
     featuredArticles: digestData?.featuredArticles || [
       {
         id: "art-quran-rules",
         title: "منهجية الاستدلال بالقرآن الكريم في تفسير الأحلام والرموز المنامية",
-        chapter: "الفصل 8 - كتاب تأويلات روحية 2026",
+        chapter: "دراسات إيمانية مرجعية",
         excerpt: "دراسة شاملة توضح الضوابط الشرعية للربط بين الآيات القرآنية وحالة الرائي النفسية والاجتماعية دون تخمين أو تكلف."
       },
       {
         id: "art-fulfilled-dreams",
         title: "كيف تتعرف على الرؤيا الصادقة والبشرى المحققة بالواقع؟",
-        chapter: "الفصل 15 - علامات تحقق الرؤيا",
-        excerpt: "علامات ودلائل واضحة بين الحلم النفسي ورؤيا البشرى الإلهية وكيفية متابعتها في ملفك الروحي."
+        chapter: "قواعد التعبير والتأويل",
+        excerpt: "علامات ودلائل واضحة بين الحلم النفسي ورؤيا البشرى الإلهية وكيفية متابعتها بوعي واطمئنان."
       }
     ],
     spiritualWisdom: digestData?.spiritualWisdom || {
