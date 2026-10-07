@@ -222,6 +222,12 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenAdmin, user,
             <button onClick={() => openLegal('refund')} className="hover:text-amber-300 transition cursor-pointer">
               سياسة الاسترجاع
             </button>
+            <span>•</span>
+            {/* الزر الجديد الذي يوجه لصفحة "من نحن" المحتوية على إخلاء المسؤولية */}
+            <button onClick={() => handleLinkClick('about-us')} className="hover:text-amber-300 transition cursor-pointer font-bold text-amber-500/80">
+              إخلاء المسؤولية والخصوصية
+            </button>
+
             {onOpenAdmin && (
               <>
                 <span>•</span>
