@@ -173,7 +173,7 @@ export const AiDreamInterpreter: React.FC<AiDreamInterpreterProps> = ({
 تفسير المنام - منصة ExplainingDream.com (أحمد الشريف 2026):
 العنوان: ${result.summary}
 التفسير الإجمالي: ${result.overallInterpretation}
-الرموز: ${result.symbolsBreakdown.map((s) => `${s.symbol}: ${s.meaning}`).join(' | ')}
+الرموز: ${result.symbolsBreakdown.map((s) => `${s.symbol}:${s.meaning}`).join(' | ')}
 البُعد الروحي: ${result.spiritualAspect}
 الأذكار الموصى بها: ${result.recommendedAdhkar.join(', ')}
     `.trim();
@@ -384,26 +384,36 @@ export const AiDreamInterpreter: React.FC<AiDreamInterpreterProps> = ({
                 </button>
               </div>
             ) : (
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 via-amber-400 to-emerald-500 hover:from-amber-400 hover:to-emerald-400 active:scale-[0.98] text-slate-950 font-bold py-3.5 rounded-xl text-base shadow-lg shadow-amber-950/30 transition duration-200 disabled:opacity-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-slate-950"
-              >
-                {isLoading ? (
-                  <>
-                    <RefreshCw className="w-5 h-5 animate-spin text-slate-950" />
-                    <span>جاري استخراج المعاني وتفكيك الرموز...</span>
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-5 h-5" />
-                    <span>استخراج التأويل المنامي الروحي ({isUnlimited ? 'مفتوح' : `متبقي ${balanceCredits} أحلام`})</span>
-                  </>
-                )}
-              </button>
+              <div className="space-y-3">
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 via-amber-400 to-emerald-500 hover:from-amber-400 hover:to-emerald-400 active:scale-[0.98] text-slate-950 font-bold py-3.5 rounded-xl text-base shadow-lg shadow-amber-950/30 transition duration-200 disabled:opacity-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-slate-950"
+                >
+                  {isLoading ? (
+                    <>
+                      <RefreshCw className="w-5 h-5 animate-spin text-slate-950" />
+                      <span>جاري استخراج المعاني وتفكيك الرموز...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-5 h-5" />
+                      <span>استخراج التأويل المنامي الروحي ({isUnlimited ? 'مفتوح' : `متبقي ${balanceCredits} أحلام`})</span>
+                    </>
+                  )}
+                </button>
+
+                {/* التنبيه القانوني المضاف أسفل زر الإرسال */}
+                <div className="flex items-start justify-center gap-1.5 text-center px-2">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                  <p className="text-[10px] text-slate-400 font-serif leading-relaxed">
+                    بإرسالك للحلم، فإنك توافق على شروط الخدمة، وتقر بأن التفسير هو تأويل روحي واستئناسي وليس تشخيصاً طبياً أو نفسياً.
+                  </p>
+                </div>
+              </div>
             )}
 
-            <p className="text-xs text-slate-400 text-center font-serif leading-relaxed">
+            <p className="text-xs text-slate-400 text-center font-serif leading-relaxed border-t border-emerald-900/40 pt-3 mt-4">
               * التفسيرات مبنية على القواعد المقررة في طبعة 2026 لكتاب "تأويلات روحية" للشيخ أحمد الشريف.
             </p>
           </form>
