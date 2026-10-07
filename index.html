@@ -120,6 +120,64 @@
         ]
       }
     </script>
+    <!-- Schema Markup for Reviews and Book -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ProfessionalService",
+      "name": "تفسير الأحلام - أحمد الشريف",
+      "image": "https://explainingdream.com/logo.png",
+      "@id": "https://explainingdream.com/",
+      "url": "https://explainingdream.com/",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "ش مسجد المهدى - الاربعين - جسرالسويس ( عين شمس الشرقية )",
+        "addressLocality": "القاهرة",
+        "postalCode": "11311",
+        "addressCountry": "EG"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 30.1367575,
+        "longitude": 31.3616455
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5.0",
+        "reviewCount": "115"
+      },
+      "sameAs": [
+        "https://maps.google.com/maps?cid=15334625208253239256",
+        "https://www.facebook.com/explainingdreams",
+        "https://www.tiktok.com/@explainingdream"
+      ]
+    },
+    {
+      "@type": "Product",
+      "name": "تأويلات روحية لفهم المشاهدات المنامية",
+      "image": "https://explainingdream.com/book-cover.png",
+      "description": "كتاب رقمي يقدم دليلاً متكاملاً لتفسير الأحلام وتأويل الرؤى وفهم المشاهدات المنامية ورموزها.",
+      "author": {
+        "@type": "Person",
+        "name": "أحمد الشريف"
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": "https://play.google.com/store/books/details?id=YOUR_BOOK_ID_HERE",
+        "priceCurrency": "EGP",
+        "price": "519.00",
+        "availability": "https://schema.org/InStock",
+        "seller": {
+          "@type": "Organization",
+          "name": "Google Play Books"
+        }
+      }
+    }
+  ]
+}
+</script>
   </head>
   <body class="bg-black text-amber-100 font-sans antialiased selection:bg-amber-500 selection:text-black min-h-screen bg-fixed">
     <div id="root"></div>
