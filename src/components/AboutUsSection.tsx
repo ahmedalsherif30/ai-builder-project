@@ -1,5 +1,5 @@
 import React from 'react';
-import { Award, ShieldCheck, Heart, BookOpen, Sparkles, CheckCircle2, MessageSquare, PhoneCall, Wallet, Smartphone } from 'lucide-react';
+import { Award, ShieldCheck, Heart, BookOpen, Sparkles, CheckCircle2, MessageSquare, PhoneCall, Wallet, Smartphone, AlertTriangle, Lock } from 'lucide-react';
 import { Logo } from './Logo';
 
 export const AboutUsSection: React.FC = () => {
@@ -105,6 +105,78 @@ export const AboutUsSection: React.FC = () => {
           </a>
         </div>
       </div>
+
+      {/* ========================================= */}
+      {/* القسم الجديد: إخلاء المسؤولية والخصوصية */}
+      {/* ========================================= */}
+      <div className="bg-slate-900/90 border border-red-900/50 p-6 sm:p-8 rounded-3xl space-y-8">
+        
+        <div className="text-center space-y-2">
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 font-serif">
+            إخلاء المسؤولية وسياسة الخصوصية
+          </h2>
+          <p className="text-xs sm:text-sm text-amber-400 font-serif max-w-2xl mx-auto">
+            تنبيهات قانونية وروحية هامة لحماية حقوق المستخدم والمنصة
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-4">
+          
+          {/* إخلاء المسؤولية */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 border-b border-red-900/50 pb-3">
+              <AlertTriangle className="w-6 h-6 text-red-400" />
+              <h3 className="text-lg font-bold text-slate-100 font-serif">
+                إخلاء المسؤولية القانونية والروحية
+              </h3>
+            </div>
+            <ul className="text-xs sm:text-sm text-slate-300 font-serif space-y-4 leading-relaxed">
+              <li className="flex items-start gap-2">
+                <span className="text-red-400 font-bold shrink-0 mt-0.5">•</span>
+                <span><b>طبيعة الخدمة:</b> جميع التفاسير والتأويلات المقدمة عبر منصة ExplainingDream.com (سواءً الصادرة عن الذكاء الاصطناعي، أو الباحث والكاتب أحمد الشريف، أو المعبرين المختصين) هي تأويلات روحية واستئناسية اجتهادية تستند إلى أصول التعبير والمراجع الروحية واللغوية.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-red-400 font-bold shrink-0 mt-0.5">•</span>
+                <span><b>ليست استشارة طبية أو نفسية:</b> التأويلات والرؤى لا تُعد بأي حال من الأحوال تشخيصاً طبياً، أو استشارة نفسية، أو توجيهاً قانونياً أو مالياً. المنصة غير مسؤولة عن أي قرارات شخصية أو حيوية يتخذها المستخدم بناءً على التفسير.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-red-400 font-bold shrink-0 mt-0.5">•</span>
+                <span><b>الحالات الطارئة:</b> في حال وجود أزمات نفسية ضاغطة أو أعراض صحية، يجب التوجه فوراً للمختصين الأطباء والرعاية الصحية المعتمدة.</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* الخصوصية والبيانات */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 border-b border-emerald-900/50 pb-3">
+              <Lock className="w-6 h-6 text-emerald-400" />
+              <h3 className="text-lg font-bold text-slate-100 font-serif">
+                التعامل مع البيانات الحساسة والسرية
+              </h3>
+            </div>
+            <ul className="text-xs sm:text-sm text-slate-300 font-serif space-y-4 leading-relaxed">
+              <li className="flex items-start gap-2">
+                <span className="text-emerald-400 font-bold shrink-0 mt-0.5">•</span>
+                <span><b>تشفير البيانات وحمايتها:</b> يتم تشفير جميع الأحلام، التفاصيل الشخصية، والملفات الروحية الخاصة بالمستخدمين بأعلى تقنيات التشفير المعتمدة.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-emerald-400 font-bold shrink-0 mt-0.5">•</span>
+                <span><b>عزل الملفات الشخصية:</b> بياناتك وحساباتك ورؤاك المحفوظة هي حق حصري لك؛ ولا يمكن لأي مستخدم آخر الاطلاع عليها (IDOR Protection).</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-emerald-400 font-bold shrink-0 mt-0.5">•</span>
+                <span><b>عدم البيع أو المشاركة:</b> نلتزم بعدم بيع أو مشاركة بياناتك الشخصية أو تفاصيل رؤاك مع أي جهات خارجية. النصوص تُعالج عبر بروتوكولات أمنية مغلقة ولا تستخدم لتدريب نماذج عامة.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-emerald-400 font-bold shrink-0 mt-0.5">•</span>
+                <span><b>حقوق المستخدم:</b> يحق للمستخدم في أي وقت طلب تعديل أو حذف حسابه وسجل أحلامه بالكامل عبر التواصل مع الدعم الفني.</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+      {/* نهاية القسم الجديد */}
 
       {/* Contact & Wallet Details */}
       <div className="bg-slate-900/90 border border-emerald-800 p-6 rounded-2xl space-y-4 text-center">
