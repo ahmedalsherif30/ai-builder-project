@@ -3,8 +3,14 @@
   "name": "منصة تفسير الأحلام والإرشاد الروحي - الشيخ أحمد الشريف",
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌙</text></svg>",
-      "type": "image/svg+xml",
+      "src": "/logo.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.png",
+      "type": "image/png",
       "sizes": "512x512",
       "purpose": "any maskable"
     }
