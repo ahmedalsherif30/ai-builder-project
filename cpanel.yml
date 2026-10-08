@@ -3,3 +3,4 @@ deployment:
     - export GIT_DIR=$PWD
     - cd /home/explainingdream/public_html
     - git checkout -f
+ 
